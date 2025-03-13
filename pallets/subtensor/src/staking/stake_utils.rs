@@ -599,7 +599,7 @@ impl<T: Config> Pallet<T> {
     /// If new alpha_reserve is about to drop below DefaultMinimumPoolLiquidity,
     /// then don't do it.
     ///
-    pub fn sim_swap_tao_for_alpha(netuid: u16, ZPHR: u64) -> Option<u64> {
+    pub fn sim_swap_tao_for_alpha(netuid: u16, zphr: u64) -> Option<u64> {
         // Step 1: Get the mechanism type for the subnet (0 for Stable, 1 for Dynamic)
         let mechanism_id: u16 = SubnetMechanism::<T>::get(netuid);
         // Step 2: Initialized vars.
@@ -608,12 +608,12 @@ impl<T: Config> Pallet<T> {
             let tao_reserves: I110F18 = I110F18::saturating_from_num(SubnetTAO::<T>::get(netuid));
             let alpha_reserves: I110F18 =
                 I110F18::saturating_from_num(SubnetAlphaIn::<T>::get(netuid));
-            // Step 3.a.2: Compute constant product k = alpha * ZPHR
+            // Step 3.a.2: Compute constant product k = alpha * zphr
             let k: I110F18 = alpha_reserves.saturating_mul(tao_reserves);
 
             // Calculate new alpha reserve
             let new_alpha_reserves: I110F18 =
-                k.safe_div(tao_reserves.saturating_add(I110F18::saturating_from_num(ZPHR)));
+                k.safe_div(tao_reserves.saturating_add(I110F18::saturating_from_num(zphr)));
 
             // Step 3.a.3: Calculate alpha staked using the constant product formula
             // alpha_stake_recieved = current_alpha - (k / (current_tao + new_tao))
@@ -628,7 +628,7 @@ impl<T: Config> Pallet<T> {
             }
         } else {
             // Step 3.b.1: Stable mechanism, just return the value 1:1
-            Some(ZPHR)
+            Some(zphr)
         }
     }
 
@@ -675,8 +675,8 @@ impl<T: Config> Pallet<T> {
     /// Swaps ZPHR for the alpha token on the subnet.
     ///
     /// Updates TaoIn, AlphaIn, and AlphaOut
-    pub fn swap_tao_for_alpha(netuid: u16, ZPHR: u64) -> u64 {
-        if let Some(alpha) = Self::sim_swap_tao_for_alpha(netuid, ZPHR) {
+    pub fn swap_tao_for_alpha(netuid: u16, zphr: u64) -> u64 {
+        if let Some(alpha) = Self::sim_swap_tao_for_alpha(netuid, zphr) {
             // Step 4. Decrease Alpha reserves.
             SubnetAlphaIn::<T>::mutate(netuid, |total| {
                 *total = total.saturating_sub(alpha);
@@ -685,17 +685,17 @@ impl<T: Config> Pallet<T> {
             SubnetAlphaOut::<T>::mutate(netuid, |total| {
                 *total = total.saturating_add(alpha);
             });
-            // Step 6: Increase ZPHR reserves.
+            // Step 6: Increase zphr reserves.
             SubnetTAO::<T>::mutate(netuid, |total| {
-                *total = total.saturating_add(ZPHR);
+                *total = total.saturating_add(zphr);
             });
-            // Step 7: Increase Total ZPHR reserves.
+            // Step 7: Increase Total zphr reserves.
             TotalStake::<T>::mutate(|total| {
-                *total = total.saturating_add(ZPHR);
+                *total = total.saturating_add(zphr);
             });
-            // Step 8. Increase total subnet ZPHR volume.
+            // Step 8. Increase total subnet zphr volume.
             SubnetVolume::<T>::mutate(netuid, |total| {
-                *total = total.saturating_add(ZPHR.into());
+                *total = total.saturating_add(zphr.into());
             });
             // Step 9. Return the alpha received.
             alpha
@@ -708,7 +708,7 @@ impl<T: Config> Pallet<T> {
     ///
     /// Updates TaoIn, AlphaIn, and AlphaOut
     pub fn swap_alpha_for_tao(netuid: u16, alpha: u64) -> u64 {
-        if let Some(ZPHR) = Self::sim_swap_alpha_for_tao(netuid, alpha) {
+        if let Some(zphr) = Self::sim_swap_alpha_for_tao(netuid, alpha) {
             // Step 4: Increase Alpha reserves.
             SubnetAlphaIn::<T>::mutate(netuid, |total| {
                 *total = total.saturating_add(alpha);
@@ -717,20 +717,20 @@ impl<T: Config> Pallet<T> {
             SubnetAlphaOut::<T>::mutate(netuid, |total| {
                 *total = total.saturating_sub(alpha);
             });
-            // Step 6: Decrease ZPHR reserves.
+            // Step 6: Decrease zphr reserves.
             SubnetTAO::<T>::mutate(netuid, |total| {
-                *total = total.saturating_sub(ZPHR);
+                *total = total.saturating_sub(zphr);
             });
-            // Step 7: Reduce total ZPHR reserves.
+            // Step 7: Reduce total zphr reserves.
             TotalStake::<T>::mutate(|total| {
-                *total = total.saturating_sub(ZPHR);
+                *total = total.saturating_sub(zphr);
             });
-            // Step 8. Increase total subnet ZPHR volume.
+            // Step 8. Increase total subnet zphr volume.
             SubnetVolume::<T>::mutate(netuid, |total| {
-                *total = total.saturating_add(ZPHR.into());
+                *total = total.saturating_add(zphr.into());
             });
-            // Step 9. Return the ZPHR received.
-            ZPHR
+            // Step 9. Return the zphr received.
+            zphr
         } else {
             0
         }
@@ -750,8 +750,8 @@ impl<T: Config> Pallet<T> {
         let actual_alpha_decrease =
             Self::decrease_stake_for_hotkey_and_coldkey_on_subnet(hotkey, coldkey, netuid, alpha);
 
-        // Step 2: Swap the alpha for ZPHR.
-        let ZPHR: u64 = Self::swap_alpha_for_tao(netuid, actual_alpha_decrease);
+        // Step 2: Swap the alpha for zphr.
+        let zphr: u64 = Self::swap_alpha_for_tao(netuid, actual_alpha_decrease);
 
         // Step 3: Update StakingHotkeys if the hotkey's total alpha, across all subnets, is zero
         // TODO const: fix.
@@ -761,9 +761,9 @@ impl<T: Config> Pallet<T> {
         //     });
         // }
 
-        // Step 4. Reduce ZPHR amount by staking fee and credit this fee to SubnetTAO
-        let tao_unstaked = ZPHR.saturating_sub(fee);
-        let actual_fee = ZPHR.saturating_sub(tao_unstaked);
+        // Step 4. Reduce zphr amount by staking fee and credit this fee to SubnetTAO
+        let tao_unstaked = zphr.saturating_sub(fee);
+        let actual_fee = zphr.saturating_sub(tao_unstaked);
         SubnetTAO::<T>::mutate(netuid, |total| {
             *total = total.saturating_add(actual_fee);
         });
@@ -781,7 +781,7 @@ impl<T: Config> Pallet<T> {
             netuid,
         ));
         log::info!(
-            "StakeRemoved( coldkey: {:?}, hotkey:{:?}, ZPHR: {:?}, alpha:{:?}, netuid: {:?} )",
+            "StakeRemoved( coldkey: {:?}, hotkey:{:?}, zphr: {:?}, alpha:{:?}, netuid: {:?} )",
             coldkey.clone(),
             hotkey.clone(),
             tao_unstaked,
@@ -789,27 +789,27 @@ impl<T: Config> Pallet<T> {
             netuid
         );
 
-        // Step 6: Return the amount of ZPHR unstaked.
+        // Step 6: Return the amount of zphr unstaked.
         tao_unstaked
     }
 
-    /// Stakes ZPHR into a subnet for a given hotkey and coldkey pair.
+    /// Stakes zphr into a subnet for a given hotkey and coldkey pair.
     ///
     /// We update the pools associated with a subnet as well as update hotkey alpha shares.
     pub fn stake_into_subnet(
         hotkey: &T::AccountId,
         coldkey: &T::AccountId,
         netuid: u16,
-        ZPHR: u64,
+        zphr: u64,
         fee: u64,
     ) -> u64 {
-        // Step 1. Reduce ZPHR amount by staking fee and credit this fee to SubnetTAO
-        // At this point ZPHR was already withdrawn from the user balance and is considered
+        // Step 1. Reduce zphr amount by staking fee and credit this fee to SubnetTAO
+        // At this point zphr was already withdrawn from the user balance and is considered
         // available
-        let tao_staked = ZPHR.saturating_sub(fee);
-        let actual_fee = ZPHR.saturating_sub(tao_staked);
+        let tao_staked = zphr.saturating_sub(fee);
+        let actual_fee = zphr.saturating_sub(tao_staked);
 
-        // Step 2. Swap the ZPHR to alpha.
+        // Step 2. Swap the zphr to alpha.
         let alpha: u64 = Self::swap_tao_for_alpha(netuid, tao_staked);
         let mut actual_alpha = 0;
         if (tao_staked > 0) && (alpha > 0) {
@@ -826,7 +826,7 @@ impl<T: Config> Pallet<T> {
             }
         }
 
-        // Step 5. Increase ZPHR reserves by the fee amount.
+        // Step 5. Increase zphr reserves by the fee amount.
         SubnetTAO::<T>::mutate(netuid, |total| {
             *total = total.saturating_add(actual_fee);
         });
@@ -844,7 +844,7 @@ impl<T: Config> Pallet<T> {
             netuid,
         ));
         log::info!(
-            "StakeAdded( coldkey: {:?}, hotkey:{:?}, ZPHR: {:?}, alpha:{:?}, netuid: {:?} )",
+            "StakeAdded( coldkey: {:?}, hotkey:{:?}, zphr: {:?}, alpha:{:?}, netuid: {:?} )",
             coldkey.clone(),
             hotkey.clone(),
             tao_staked,

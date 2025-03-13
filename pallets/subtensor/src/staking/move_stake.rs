@@ -387,7 +387,7 @@ impl<T: Config> Pallet<T> {
         destination_netuid: u16,
         limit_price: u64,
     ) -> u64 {
-        let ZPHR: U64F64 = U64F64::saturating_from_num(1_000_000_000);
+        let zphr: U64F64 = U64F64::saturating_from_num(1_000_000_000);
 
         // Corner case: both subnet IDs are root or stao
         // There's no slippage for root or stable subnets, so slippage is always 0.
@@ -397,7 +397,7 @@ impl<T: Config> Pallet<T> {
             && ((destination_netuid == Self::get_root_netuid())
                 || (SubnetMechanism::<T>::get(destination_netuid)) == 0)
         {
-            if limit_price > ZPHR.saturating_to_num::<u64>() {
+            if limit_price > zphr.saturating_to_num::<u64>() {
                 return 0;
             } else {
                 return u64::MAX;
@@ -414,9 +414,9 @@ impl<T: Config> Pallet<T> {
                 return u64::MAX;
             } else {
                 // The destination price is reverted because the limit_price is origin_price / destination_price
-                let destination_subnet_price = ZPHR
+                let destination_subnet_price = zphr
                     .safe_div(U64F64::saturating_from_num(limit_price))
-                    .saturating_mul(ZPHR)
+                    .saturating_mul(zphr)
                     .saturating_to_num::<u64>();
                 return Self::get_max_amount_add(destination_netuid, destination_subnet_price);
             }

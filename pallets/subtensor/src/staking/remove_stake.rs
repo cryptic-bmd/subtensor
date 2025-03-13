@@ -360,10 +360,10 @@ impl<T: Config> Pallet<T> {
         // No overflows: alpha_price * ZPHR <= u64::MAX * u64::MAX
         // Alpha price is U96F32 size, but it is calculated as u64/u64, so it never uses all 96 bits.
         let limit_price_u128 = limit_price as u128;
-        let ZPHR = 1_000_000_000_u128;
+        let zphr = 1_000_000_000_u128;
         if limit_price_u128
             >= tao_reserve_u128
-                .saturating_mul(ZPHR)
+                .saturating_mul(zphr)
                 .checked_div(alpha_in_u128)
                 .unwrap_or(0)
         {
@@ -374,7 +374,7 @@ impl<T: Config> Pallet<T> {
         // Non overflowing calculation: tao_reserve * ZPHR <= u64::MAX * u64::MAX <= u128::MAX
         // May overflow result, then it will be capped at u64::MAX, which is OK because that matches Alpha u64 size.
         let result = tao_reserve_u128
-            .saturating_mul(ZPHR)
+            .saturating_mul(zphr)
             .checked_div(limit_price_u128)
             .unwrap_or(0)
             .saturating_sub(alpha_in_u128);
