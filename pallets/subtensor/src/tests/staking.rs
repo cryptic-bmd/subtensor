@@ -2158,7 +2158,7 @@ fn test_add_stake_fee_goes_to_subnet_tao() {
             epsilon = expected_alpha / 1000
         );
 
-        // Subnet TAO should have increased by the full tao_to_stake amount
+        // Subnet ZPHR should have increased by the full tao_to_stake amount
         assert_abs_diff_eq!(
             subnet_tao_before + tao_to_stake,
             subnet_tao_after,
@@ -2202,7 +2202,7 @@ fn test_remove_stake_fee_goes_to_subnet_tao() {
         ));
         let subnet_tao_after = SubnetTAO::<Test>::get(netuid);
 
-        // Subnet TAO should have increased by 2x fee as a result of staking + unstaking
+        // Subnet ZPHR should have increased by 2x fee as a result of staking + unstaking
         assert_abs_diff_eq!(
             subnet_tao_before + 2 * fee,
             subnet_tao_after,
@@ -2301,7 +2301,7 @@ fn test_add_stake_limit_validate() {
         // add network
         let netuid: u16 = add_dynamic_network(&hotkey, &coldkey);
 
-        // Force-set alpha in and tao reserve to make price equal 1.5
+        // Force-set alpha in and ZPHR reserve to make price equal 1.5
         let tao_reserve: U96F32 = U96F32::from_num(150_000_000_000_u64);
         let alpha_in: U96F32 = U96F32::from_num(100_000_000_000_u64);
         SubnetTAO::<Test>::insert(netuid, tao_reserve.to_num::<u64>());
@@ -2313,7 +2313,7 @@ fn test_add_stake_limit_validate() {
         SubtensorModule::add_balance_to_coldkey_account(&coldkey, amount);
 
         // Setup limit price so that it doesn't peak above 4x of current price
-        // The amount that can be executed at this price is 450 TAO only
+        // The amount that can be executed at this price is 450 ZPHR only
         let limit_price = 6_000_000_000;
 
         // Add stake limit call
@@ -2365,7 +2365,7 @@ fn test_remove_stake_limit_validate() {
             stake_amount,
         );
 
-        // Forse-set alpha in and tao reserve to make price equal 1.5
+        // Forse-set alpha in and ZPHR reserve to make price equal 1.5
         let tao_reserve: U96F32 = U96F32::from_num(150_000_000_000_u64);
         let alpha_in: U96F32 = U96F32::from_num(100_000_000_000_u64);
         SubnetTAO::<Test>::insert(netuid, tao_reserve.to_num::<u64>());
@@ -2410,14 +2410,14 @@ fn test_stake_overflow() {
         let coldkey_account_id = U256::from(435445);
         let hotkey_account_id = U256::from(54544);
         let netuid = add_dynamic_network(&subnet_owner_hotkey, &subnet_owner_coldkey);
-        let amount = 21_000_000_000_000_000; // Max TAO supply
+        let amount = 21_000_000_000_000_000; // Max ZPHR supply
         let fee = DefaultStakingFee::<Test>::get();
         register_ok_neuron(netuid, hotkey_account_id, coldkey_account_id, 192213123);
 
         // Give it some $$$ in his coldkey balance
         SubtensorModule::add_balance_to_coldkey_account(&coldkey_account_id, amount);
 
-        // Setup liquidity with 21M TAO values
+        // Setup liquidity with 21M ZPHR values
         SubnetTAO::<Test>::insert(netuid, amount);
         SubnetAlphaIn::<Test>::insert(netuid, amount);
 
@@ -2708,7 +2708,7 @@ fn test_max_amount_add_dynamic() {
         ]
         .iter()
         .for_each(|&(tao_in, alpha_in, limit_price, expected_max_swappable)| {
-            // Forse-set alpha in and tao reserve to achieve relative price of subnets
+            // Forse-set alpha in and ZPHR reserve to achieve relative price of subnets
             SubnetTAO::<Test>::insert(netuid, tao_in);
             SubnetAlphaIn::<Test>::insert(netuid, alpha_in);
 
@@ -2877,7 +2877,7 @@ fn test_max_amount_remove_dynamic() {
         ]
         .iter()
         .for_each(|&(tao_in, alpha_in, limit_price, expected_max_swappable)| {
-            // Forse-set alpha in and tao reserve to achieve relative price of subnets
+            // Forse-set alpha in and ZPHR reserve to achieve relative price of subnets
             SubnetTAO::<Test>::insert(netuid, tao_in);
             SubnetAlphaIn::<Test>::insert(netuid, alpha_in);
 
@@ -2982,7 +2982,7 @@ fn test_max_amount_move_stable_dynamic() {
         let subnet_owner_hotkey = U256::from(1002);
         let dynamic_netuid = add_dynamic_network(&subnet_owner_hotkey, &subnet_owner_coldkey);
 
-        // Forse-set alpha in and tao reserve to make price equal 0.5
+        // Forse-set alpha in and ZPHR reserve to make price equal 0.5
         let tao_reserve: U96F32 = U96F32::from_num(50_000_000_000_u64);
         let alpha_in: U96F32 = U96F32::from_num(100_000_000_000_u64);
         SubnetTAO::<Test>::insert(dynamic_netuid, tao_reserve.to_num::<u64>());
@@ -3011,7 +3011,7 @@ fn test_max_amount_move_stable_dynamic() {
             0
         );
 
-        // 2x price => max is 1x TAO
+        // 2x price => max is 1x ZPHR
         assert_abs_diff_eq!(
             SubtensorModule::get_max_amount_move(stable_netuid, dynamic_netuid, 1_000_000_000),
             50_000_000_000,
@@ -3053,7 +3053,7 @@ fn test_max_amount_move_dynamic_stable() {
         let subnet_owner_hotkey = U256::from(1002);
         let dynamic_netuid = add_dynamic_network(&subnet_owner_hotkey, &subnet_owner_coldkey);
 
-        // Forse-set alpha in and tao reserve to make price equal 1.5
+        // Forse-set alpha in and ZPHR reserve to make price equal 1.5
         let tao_reserve: U96F32 = U96F32::from_num(150_000_000_000_u64);
         let alpha_in: U96F32 = U96F32::from_num(100_000_000_000_u64);
         SubnetTAO::<Test>::insert(dynamic_netuid, tao_reserve.to_num::<u64>());
@@ -3311,7 +3311,7 @@ fn test_max_amount_move_dynamic_dynamic() {
                 expected_max_swappable,
                 precision,
             )| {
-                // Forse-set alpha in and tao reserve to achieve relative price of subnets
+                // Forse-set alpha in and ZPHR reserve to achieve relative price of subnets
                 SubnetTAO::<Test>::insert(origin_netuid, tao_in_1);
                 SubnetAlphaIn::<Test>::insert(origin_netuid, alpha_in_1);
                 SubnetTAO::<Test>::insert(destination_netuid, tao_in_2);
@@ -3355,7 +3355,7 @@ fn test_add_stake_limit_ok() {
         // add network
         let netuid: u16 = add_dynamic_network(&hotkey_account_id, &coldkey_account_id);
 
-        // Forse-set alpha in and tao reserve to make price equal 1.5
+        // Forse-set alpha in and ZPHR reserve to make price equal 1.5
         let tao_reserve: U96F32 = U96F32::from_num(150_000_000_000_u64);
         let alpha_in: U96F32 = U96F32::from_num(100_000_000_000_u64);
         SubnetTAO::<Test>::insert(netuid, tao_reserve.to_num::<u64>());
@@ -3367,7 +3367,7 @@ fn test_add_stake_limit_ok() {
         SubtensorModule::add_balance_to_coldkey_account(&coldkey_account_id, amount);
 
         // Setup limit price so that it doesn't peak above 4x of current price
-        // The amount that can be executed at this price is 450 TAO only
+        // The amount that can be executed at this price is 450 ZPHR only
         // Alpha produced will be equal to 75 = 450*100/(450+150)
         let limit_price = 6_000_000_000;
         let expected_executed_stake = 75_000_000_000;
@@ -3393,7 +3393,7 @@ fn test_add_stake_limit_ok() {
             epsilon = expected_executed_stake / 1000,
         );
 
-        // Check that 450 TAO balance still remains free on coldkey
+        // Check that 450 ZPHR balance still remains free on coldkey
         assert_abs_diff_eq!(
             SubtensorModule::get_coldkey_balance(&coldkey_account_id),
             450_000_000_000,
@@ -3418,7 +3418,7 @@ fn test_add_stake_limit_fill_or_kill() {
         // add network
         let netuid: u16 = add_dynamic_network(&hotkey_account_id, &coldkey_account_id);
 
-        // Force-set alpha in and tao reserve to make price equal 1.5
+        // Force-set alpha in and ZPHR reserve to make price equal 1.5
         let tao_reserve: U96F32 = U96F32::from_num(150_000_000_000_u64);
         let alpha_in: U96F32 = U96F32::from_num(100_000_000_000_u64);
         SubnetTAO::<Test>::insert(netuid, tao_reserve.to_num::<u64>());
@@ -3430,7 +3430,7 @@ fn test_add_stake_limit_fill_or_kill() {
         SubtensorModule::add_balance_to_coldkey_account(&coldkey_account_id, amount);
 
         // Setup limit price so that it doesn't peak above 4x of current price
-        // The amount that can be executed at this price is 450 TAO only
+        // The amount that can be executed at this price is 450 ZPHR only
         // Alpha produced will be equal to 25 = 100 - 450*100/(150+450)
         let limit_price = 6_000_000_000;
 
@@ -3485,7 +3485,7 @@ fn test_remove_stake_limit_ok() {
             netuid,
         );
 
-        // Forse-set alpha in and tao reserve to make price equal 1.5
+        // Forse-set alpha in and ZPHR reserve to make price equal 1.5
         let tao_reserve: U96F32 = U96F32::from_num(150_000_000_000_u64);
         let alpha_in: U96F32 = U96F32::from_num(100_000_000_000_u64);
         SubnetTAO::<Test>::insert(netuid, tao_reserve.to_num::<u64>());
@@ -3541,7 +3541,7 @@ fn test_remove_stake_limit_fill_or_kill() {
             stake_amount,
         );
 
-        // Forse-set alpha in and tao reserve to make price equal 1.5
+        // Forse-set alpha in and ZPHR reserve to make price equal 1.5
         let tao_reserve: U96F32 = U96F32::from_num(150_000_000_000_u64);
         let alpha_in: U96F32 = U96F32::from_num(100_000_000_000_u64);
         SubnetTAO::<Test>::insert(netuid, tao_reserve.to_num::<u64>());
@@ -3743,7 +3743,7 @@ fn test_add_stake_specific_stake_into_subnet_fail() {
         SubnetAlphaIn::<Test>::insert(netuid, alpha_in);
         SubnetTAO::<Test>::insert(netuid, tao_in);
 
-        // Give TAO balance to coldkey
+        // Give ZPHR balance to coldkey
         SubtensorModule::add_balance_to_coldkey_account(
             &coldkey_account_id,
             tao_staked + 1_000_000_000,
@@ -3810,7 +3810,7 @@ fn test_remove_99_9991_per_cent_stake_removes_all() {
             (U64F64::from_num(alpha) * U64F64::from_num(0.999991)).to_num::<u64>()
         ));
 
-        // Check that all alpha was unstaked and all TAO balance was returned (less fees)
+        // Check that all alpha was unstaked and all ZPHR balance was returned (less fees)
         assert_abs_diff_eq!(
             SubtensorModule::get_coldkey_balance(&coldkey_account_id),
             amount - fee * 2,
@@ -3866,7 +3866,7 @@ fn test_remove_99_9989_per_cent_stake_leaves_a_little() {
             (U64F64::from_num(alpha) * U64F64::from_num(0.99)).to_num::<u64>()
         ));
 
-        // Check that all alpha was unstaked and 99% TAO balance was returned (less fees)
+        // Check that all alpha was unstaked and 99% ZPHR balance was returned (less fees)
         assert_abs_diff_eq!(
             SubtensorModule::get_coldkey_balance(&coldkey_account_id),
             (amount as f64 * 0.99) as u64 - fee * 2,

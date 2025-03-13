@@ -44,7 +44,7 @@ impl<T: Config> Pallet<T> {
             .collect();
         log::debug!("All subnet netuids: {:?}", subnets);
 
-        // --- 2. Get sum of tao reserves ( in a later version we will switch to prices. )
+        // --- 2. Get sum of ZPHR reserves ( in a later version we will switch to prices. )
         let mut total_moving_prices: I96F32 = I96F32::saturating_from_num(0.0);
         for netuid_i in subnets.iter() {
             // Get and update the moving price of each subnet adding the total together.
@@ -62,7 +62,7 @@ impl<T: Config> Pallet<T> {
             // Get subnet price.
             let price_i: I96F32 = Self::get_alpha_price(*netuid_i);
             log::debug!("price_i: {:?}", price_i);
-            // Get subnet TAO.
+            // Get subnet ZPHR.
             let moving_price_i: I96F32 = Self::get_moving_alpha_price(*netuid_i);
             log::debug!("moving_price_i: {:?}", moving_price_i);
             // Emission is price over total.
@@ -85,7 +85,7 @@ impl<T: Config> Pallet<T> {
             log::debug!("alpha_in_i: {:?}", alpha_in_i);
             // Get alpha_out.
             let alpha_out_i = alpha_emission_i;
-            // Only emit TAO if the subnetwork allows registration.
+            // Only emit ZPHR if the subnetwork allows registration.
             if !Self::get_network_registration_allowed(*netuid_i)
                 && !Self::get_network_pow_registration_allowed(*netuid_i)
             {
@@ -116,7 +116,7 @@ impl<T: Config> Pallet<T> {
             SubnetAlphaOut::<T>::mutate(*netuid_i, |total| {
                 *total = total.saturating_add(alpha_out_i);
             });
-            // Inject TAO in.
+            // Inject ZPHR in.
             let tao_in_i: u64 = tou64!(*tao_in.get(netuid_i).unwrap_or(&asfloat!(0)));
             SubnetTaoInEmission::<T>::insert(*netuid_i, tao_in_i);
             SubnetTAO::<T>::mutate(*netuid_i, |total| {
@@ -152,13 +152,13 @@ impl<T: Config> Pallet<T> {
             });
         }
 
-        // --- 6. Seperate out root dividends in alpha and sell them into tao.
+        // --- 6. Seperate out root dividends in alpha and sell them into ZPHR.
         // Then accumulate those dividends for later.
         for netuid_i in subnets.iter() {
             // Get remaining alpha out.
             let alpha_out_i: I96F32 = *alpha_out.get(netuid_i).unwrap_or(&asfloat!(0.0));
             log::debug!("alpha_out_i: {:?}", alpha_out_i);
-            // Get total TAO on root.
+            // Get total ZPHR on root.
             let root_tao: I96F32 = asfloat!(SubnetTAO::<T>::get(0));
             log::debug!("root_tao: {:?}", root_tao);
             // Get total ALPHA on subnet.
@@ -305,12 +305,12 @@ impl<T: Config> Pallet<T> {
         for (hotkey, dividend) in dividends {
             // Get hotkey ALPHA on subnet.
             let alpha_stake = asfloat!(Self::get_stake_for_hotkey_on_subnet(&hotkey, netuid));
-            // Get hotkey TAO on root.
+            // Get hotkey ZPHR on root.
             let root_stake: I96F32 = asfloat!(Self::get_stake_for_hotkey_on_subnet(
                 &hotkey,
                 Self::get_root_netuid()
             ));
-            // Convert TAO to alpha with weight.
+            // Convert ZPHR to alpha with weight.
             let root_alpha: I96F32 = root_stake.saturating_mul(Self::get_tao_weight());
             // Get total from root and local
             let total_alpha: I96F32 = alpha_stake.saturating_add(root_alpha);
@@ -337,16 +337,16 @@ impl<T: Config> Pallet<T> {
         log::debug!("root_dividends: {:?}", root_dividends);
         log::debug!("total_root_divs: {:?}", total_root_divs);
 
-        // Compute root divs as TAO. Here we take
+        // Compute root divs as ZPHR. Here we take
         let mut tao_dividends: BTreeMap<T::AccountId, I96F32> = BTreeMap::new();
         for (hotkey, root_divs) in root_dividends {
             // Root proportion.
             let root_share: I96F32 = root_divs.checked_div(total_root_divs).unwrap_or(zero);
             log::debug!("hotkey: {:?}, root_share: {:?}", hotkey, root_share);
-            // Root proportion in TAO
+            // Root proportion in ZPHR
             let root_tao: I96F32 = asfloat!(pending_tao).saturating_mul(root_share);
             log::debug!("hotkey: {:?}, root_tao: {:?}", hotkey, root_tao);
-            // Record root dividends as TAO.
+            // Record root dividends as ZPHR.
             tao_dividends
                 .entry(hotkey)
                 .and_modify(|e| *e = root_tao)
@@ -410,7 +410,7 @@ impl<T: Config> Pallet<T> {
             });
         }
 
-        // Distribute root tao divs.
+        // Distribute root ZPHR divs.
         let _ = TaoDividendsPerSubnet::<T>::clear_prefix(netuid, u32::MAX, None);
         for (hotkey, mut root_tao) in tao_dividends {
             // Get take prop
@@ -452,7 +452,7 @@ impl<T: Config> Pallet<T> {
             );
         }
 
-        // Get TAO weight
+        // Get ZPHR weight
         let tao_weight: I96F32 = Self::get_tao_weight();
 
         // Get the hotkey's stake including weight

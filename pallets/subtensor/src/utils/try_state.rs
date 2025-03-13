@@ -47,7 +47,7 @@ impl<T: Config> Pallet<T> {
             let acc = acc.saturating_add(stake);
 
             if netuid == Self::get_root_netuid() {
-                // root network doesn't have initial pool TAO
+                // root network doesn't have initial pool ZPHR
                 acc
             } else {
                 acc.saturating_sub(Self::get_network_min_lock())

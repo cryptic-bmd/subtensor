@@ -2,8 +2,8 @@
 name = "pallet-commitments"
 version = "4.0.0-dev"
 description = "Add the ability to commit generic hashed data for network participants."
-authors = ["Bittensor Nucleus Team"]
-homepage = "https://bittensor.com"
+authors = ["Zephyros Nucleus Team"]
+homepage = "https://zephyros.com"
 edition = "2024"
 license = "Unlicense"
 publish = false

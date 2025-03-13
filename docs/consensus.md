@@ -1,6 +1,6 @@
 ## Yuma Consensus
 
-Bittensor uses a subjective utility consensus mechanism called Yuma Consensus which rewards subnet validators with scoring incentive for producing evaluations of miner-value which are in agreement with the subjective evaluations produced by other subnet validators weighted by stake. Subnet servers receive incentive for their share of the utility according to the subnet validator consensus. Yuma Consensus pertains to subnet validation, instead of blockchain validation (substrate), so this writing will always refer to subnet validators and servers.
+Zephyros uses a subjective utility consensus mechanism called Yuma Consensus which rewards subnet validators with scoring incentive for producing evaluations of miner-value which are in agreement with the subjective evaluations produced by other subnet validators weighted by stake. Subnet servers receive incentive for their share of the utility according to the subnet validator consensus. Yuma Consensus pertains to subnet validation, instead of blockchain validation (substrate), so this writing will always refer to subnet validators and servers.
 
 ### Problem definition
 
@@ -15,7 +15,7 @@ These subjective utility networks predominantly rely on manual mechanisms for re
 
 Community oversight (as in Steemit) must identify wrongful downvoting, but only indirect remediation via counter-voting can penalize bad actors. The absence of voting reputation means users can only downvote the content of bad actors as retribution and thereby only damage content reputation, because no automated penalty mechanism exists. Similarly, users can upvote their own content and potentially receive nominal reward according to their stake, so reward manipulation may go unchecked.
 
-High-volume, on-demand generative content (as in Bittensor) demands automated evaluation and divide-and-conquer validation, but introduces subjectivity both in the automated value measures and mutually exclusive task subsets across subnet validators. A coalition of validators can collude to skew scoring of subnet servers in their favour, which is harder to detect because of the inherent subjectivity. Existing consensus mechanisms will fail to deter reward manipulation for such high-volume subjective utility networks, so the need for a more sophisticated consensus arises.
+High-volume, on-demand generative content (as in Zephyros) demands automated evaluation and divide-and-conquer validation, but introduces subjectivity both in the automated value measures and mutually exclusive task subsets across subnet validators. A coalition of validators can collude to skew scoring of subnet servers in their favour, which is harder to detect because of the inherent subjectivity. Existing consensus mechanisms will fail to deter reward manipulation for such high-volume subjective utility networks, so the need for a more sophisticated consensus arises.
 
 ### Consensus Mechanism
 
@@ -34,6 +34,7 @@ Yuma Consensus is adversarially-resilient when majority stake is honest, via sta
 ### Game-theoretic framework
 
 #### Preliminaries
+
 We consider a two-team game between (protagonist) honest stake ($0.5< S_H\le 1$) and (adversarial) cabal stake ($1 - S_H$), with $|H|$ honest and $|C|$ cabal players, that have $S_H = \sum_{i\in H}S_i$ honest stake and $1-S_H = \sum_{i\in C}S_i$ cabal stake. They compete for total fixed reward $E_H + E_C = 1$, with honest emission $E_H$ and cabal emission $E_C$, respectively. Then the stake updates to $S_H'=S_H+\tau E_H$ and $S_C'=(1 - S_H)+\tau E_C$, where $\tau$ decides the emission schedule. We normalize stake after the emission update, so that $\sum S'=1$. The honest objective $S_H\le E_H$ at least retains scoring power $S_H$ over all action transitions in the game, otherwise when $E_H\le S_H$ honest emission will erode to 0 over time, despite a starting condition of $0.5\lt S_H$.
 
 We assume honest stake sets objectively correct weights $W_H$ on itself, and $1 - W_H$ on the cabal, where honest weight $W_H$ represents an ongoing expense of the honest player such as utility production, sustained throughout the game. However, cabal stake has an action policy that freely sets weight $W_C$ on itself, and $1 - W_C$ on the honest player, at no cost to the cabal player.
@@ -47,6 +48,7 @@ We then assume the honest majority $S_H>0.5$ can counter with a consensus policy
 $$\min_{\pi}\max_{W_C}E[W_H\ | \ S_H=E_H(S_H,\pi(\mathbf{W}))].\tag{2}$$
 
 #### Consensus policy
+
 Majority stake enforces an independent and anonymous consensus policy $\pi$ (through a blockchain solution) that modifies the weights to minimize the expense $W_H$, which has been maximized by the cabal applying an objectively incorrect gratis self-weight $W_C$. Consensus aims to produce $\pi(\mathbf{W})\rightarrow (W'_H, W'_C)$ so that $W'_C=1-W'_H$, by correcting the error $\epsilon=W_C+W_H-1>0$. Note that the input cost $W_H$ remains fully expensed, and that $W'_H$ merely modifies the reward distribution that follows, but not knowing which players are honest or cabal (anonymous property).
 
 We propose a consensus policy that uses stake-based median as consensus weight $\overline{W_j}$, so that $\kappa$-stake (typically majority, i.e. $\kappa\ge 0.5$) decides the maximum supported weight on each subnet server $j$.
@@ -58,6 +60,7 @@ The bonds penalty $\beta$ controls the degree to which weights for bonds are cut
 $$\widetilde{W_{ij}} = (1-\beta) \cdot W_{ij} + \beta \cdot \overline{W_{ij}}\tag{4}$$
 
 #### Validator bonding
+
 A subnet validator $i$ bonds with server $j$, where the instant bond value is the normalized bonds penalty clipped weighted stake.
 $$\Delta B_{ij} = S_i \cdot \widetilde{W_{ij}} \left/ \left( \sum_k S_k \cdot \widetilde{W_{kj}} \right) \right.\tag{5}$$
 Validators can speculate on server utility by discovering and bonding to promising new servers, but to reward such exploration we use an exponential moving average (EMA) bond over time.
@@ -65,39 +68,40 @@ Instant bond $\Delta B_{ij}$ at current timestep becomes an EMA observation.
 We sum typical $\alpha=10$% of the instant bond with remaining $90$% of previous EMA bond, to bond over time and reward early discovery while preventing abrupt changes and its exploitation potential.
 $$B_{ij}^{(t)} = \alpha\cdot\Delta B_{ij} + (1-\alpha)\cdot B_{ij}^{(t-1)}\tag{6}$$
 
-
 #### Reward distribution
-Emission ratio $\xi$ decides the ratio of emission for validation rewards, and $1-\xi$ the ratio for server incentive, typically $\xi=0.5$. 
+
+Emission ratio $\xi$ decides the ratio of emission for validation rewards, and $1-\xi$ the ratio for server incentive, typically $\xi=0.5$.
 $$E_i = \xi \cdot D_i + (1-\xi) \cdot I_i\tag{7}$$
 
 Subnet server incentive $I_j = R_j / \sum_k R_k$ is normalized server rank $R_j = \sum_i S_i \cdot \overline{W_{ij}}$ (sum of consensus-clipped weighted stake).
 
-Validation reward $D_i = \sum_j B_{ij} \cdot I_j$ is the subnet validator's EMA bond with server $j$ multiplied with server $j$ incentive. 
-
+Validation reward $D_i = \sum_j B_{ij} \cdot I_j$ is the subnet validator's EMA bond with server $j$ multiplied with server $j$ incentive.
 
 #### Mathematical definitions
-| Variable | Equation | Description |
-| - | - | - |
-| Weight | $W_{ij}$ | Validator $i$ weight on server $j$. |
-| Stake | $S_i = S'_i / \sum_k S'_k$ | Validator $i$ relative stake. |
-| Server prerank | $P_j = \sum_i S_i \cdot W_{ij}$ | Sum of weighted stake. |
-| Server consensus weight | $\overline{W_j} = \arg \max_w \left( \sum_i S_i \cdot \left\lbrace W_{ij} \ge w \right\rbrace \ge \kappa \right)$ | $\kappa$-stake supported maximum weight on server $j$. |
-| Consensus-clipped weight | $\overline{W_{ij}} = \min( W_{ij}, \overline{W_j} )$ | Validator $i$ consensus-clipped weight on server $j$. |
-| Server rank | $R_j = \sum_i S_i \cdot \overline{W_{ij}}$ | Sum of consensus-clipped weighted stake. |
-| Server incentive | $I_j = R_j / \sum_k R_k$ | Ratio of incentive for server $j$. |
-| Server trust | $T_j = R_j / P_j$ | Relative server weight remaining after consensus-clip. |
-| Validator trust | $T_{vi} =  \sum_j \overline{W_{ij}}$ | Relative validator weight remaining after consensus-clip. |
-| Bonds penalty | $\beta \in [0, 1]$ | Degree to cut bonds above consensus weight. |
-| Weight for bonds | $\widetilde{W_{ij}} = (1-\beta) \cdot W_{ij} + \beta \cdot \overline{W_{ij}}$ | Apply bonds penalty to weights. |
-| Validator bond | $\Delta B_{ij} = S_i \cdot \widetilde{W_{ij}} \left/ \left( \sum_k S_k \cdot \widetilde{W_{kj}} \right) \right.$ | Validator $i$ bond with server $j$. |
-| Validator EMA bond | $B_{ij}^{(t)} = \alpha\cdot\Delta B_{ij} + (1-\alpha)\cdot B_{ij}^{(t-1)}$ | Validator $i$ EMA bond with server $j$. |
-| Validator reward | $D_i = \sum_j B_{ij} \cdot I_j$ | Validator $i$ portion of incentive. |
-| Emission ratio | $\xi \in [0, 1]$ | Reward/incentive ratio for emission |
-| Emission | $E_i = \xi \cdot D_i + (1-\xi) \cdot I_i$ | Emission for node $i$. |
 
+| Variable                 | Equation                                                                                                          | Description                                               |
+| ------------------------ | ----------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
+| Weight                   | $W_{ij}$                                                                                                          | Validator $i$ weight on server $j$.                       |
+| Stake                    | $S_i = S'_i / \sum_k S'_k$                                                                                        | Validator $i$ relative stake.                             |
+| Server prerank           | $P_j = \sum_i S_i \cdot W_{ij}$                                                                                   | Sum of weighted stake.                                    |
+| Server consensus weight  | $\overline{W_j} = \arg \max_w \left( \sum_i S_i \cdot \left\lbrace W_{ij} \ge w \right\rbrace \ge \kappa \right)$ | $\kappa$-stake supported maximum weight on server $j$.    |
+| Consensus-clipped weight | $\overline{W_{ij}} = \min( W_{ij}, \overline{W_j} )$                                                              | Validator $i$ consensus-clipped weight on server $j$.     |
+| Server rank              | $R_j = \sum_i S_i \cdot \overline{W_{ij}}$                                                                        | Sum of consensus-clipped weighted stake.                  |
+| Server incentive         | $I_j = R_j / \sum_k R_k$                                                                                          | Ratio of incentive for server $j$.                        |
+| Server trust             | $T_j = R_j / P_j$                                                                                                 | Relative server weight remaining after consensus-clip.    |
+| Validator trust          | $T_{vi} =  \sum_j \overline{W_{ij}}$                                                                              | Relative validator weight remaining after consensus-clip. |
+| Bonds penalty            | $\beta \in [0, 1]$                                                                                                | Degree to cut bonds above consensus weight.               |
+| Weight for bonds         | $\widetilde{W_{ij}} = (1-\beta) \cdot W_{ij} + \beta \cdot \overline{W_{ij}}$                                     | Apply bonds penalty to weights.                           |
+| Validator bond           | $\Delta B_{ij} = S_i \cdot \widetilde{W_{ij}} \left/ \left( \sum_k S_k \cdot \widetilde{W_{kj}} \right) \right.$  | Validator $i$ bond with server $j$.                       |
+| Validator EMA bond       | $B_{ij}^{(t)} = \alpha\cdot\Delta B_{ij} + (1-\alpha)\cdot B_{ij}^{(t-1)}$                                        | Validator $i$ EMA bond with server $j$.                   |
+| Validator reward         | $D_i = \sum_j B_{ij} \cdot I_j$                                                                                   | Validator $i$ portion of incentive.                       |
+| Emission ratio           | $\xi \in [0, 1]$                                                                                                  | Reward/incentive ratio for emission                       |
+| Emission                 | $E_i = \xi \cdot D_i + (1-\xi) \cdot I_i$                                                                         | Emission for node $i$.                                    |
 
 #### Subtensor epoch
+
 Subtensor blockchain nodes calculate consensus and rewards during each subnet [`epoch`](../pallets/subtensor/src/epoch.rs) with associated code excerpts as follows.
+
 ```rust
 let mut weights: Vec<Vec<I32F32>> = Self::get_weights( netuid );  // Weight
 let preranks: Vec<I32F32> = matmul( &weights, &active_stake );  // Server prerank
@@ -113,12 +117,13 @@ let mut dividends: Vec<I32F32> = inplace_normalize(matmul_transpose( &ema_bonds,
 ```
 
 ### Consensus guarantees
+
 Yuma Consensus guarantees honest majority stake retention $S_H\le E_H$ even under worst-case adversarial attacks, given sufficiently large honest utility $W_H$. The specific honest stake and utility pairs that delineate the guarantees are complicated by natural variances inside large realistic networks.
 Therefore, we use extensive random sampling simulations (Monte Carlo studies) of large realistic networks and subject them to varying degrees of adversarial attacks, and calculate comprehensive consensus guarantees under representative conditions.
 Note the primary assumption is that the majority stake is honest, so we use majority/honest interchangeably, same with minority/cabal.
 
-
 #### Retention graphs
+
 Consensus guarantees are dependent on stake, utility, and subnet validator behaviour, so we use 2D contour plots to comprehensively display guarantees across each possible set of conditions.
 The x-axis is major self-weight and the y-axis is minor self-weight, and each contour line is a specific major stake.
 Major/honest self-weight $W_H$ is the true honest utility, while minor/cabal self-weight $W_C$ is an arbitrary value a self-serving coalition may self-report.
@@ -139,11 +144,13 @@ Retention graphs like these comprehensively capture consensus guarantees across 
 Subtensor integration tests run Monte Carlo simulations of large realistic networks under adversarial conditions, and constructs retention profiles to confirm consensus guarantees of the actual blockchain implementation.
 
 Retention profiles are reproducible by running [`_map_consensus_guarantees`](../pallets/subtensor/tests/epoch.rs) (decorate with `#[test]`).
+
 ```bash
 RUST_BACKTRACE=1 SKIP_WASM_BUILD=1 cargo test -- _map_consensus_guarantees --exact --nocapture > consensus.txt
 ```
 
 #### Subjectivity variance
+
 Yuma Consensus corrects reward manipulation in subjective utility networks, but the extent of subjectivity influences the exact consensus guarantees. In particular, we expect lower subjectivity to offer improved guarantees since there is stronger consensus. However, for higher variance in assigned weights it is easier to hide reward manipulation, we then expect poorer guarantees.
 
 <p align="center">
@@ -161,6 +168,7 @@ This means that a bad actor with 40% stake that produces 30% utility or more can
 In practice, we typically observe standard deviations of $0.2\mu$ to $0.4\mu$, so Yuma Consensus guarantees honest 60% stake retention for ~70% honest utility or more.
 
 #### Majority ratio (κ)
+
 Hyperparameter `Kappa` sets the ratio of stake that decides consensus, with a typical recommended value of $\kappa=0.5$, which means that at least 50% of stake needs to be in consensus on the maximum weight assignable to a specific server.
 Reducing $\kappa$ weakens consensus and allows smaller cabals to manipulate rewards, in particular $\kappa=0.4$ demands higher honest utility when $S_H<0.6$ (such as $0.51$ and $0.55$).
 Increasing $\kappa$ demands greater honest stake, e.g. when $\kappa=0.6$ there is no protection for $S_H<0.6$ even with $W_H=1$.
@@ -173,6 +181,7 @@ Hence $\kappa=0.5$ is typically the most sensible setting.
 </p>
 
 #### Bonds penalty (β)
+
 Yuma Consensus separately adjusts server incentive $I_j$ and validation reward $D_i$ to counter manipulation, where the extent of validation reward correction depends on the bonds penalty $\beta$.
 Server incentive always corrects fully, but validation reward correction is adjustable to control the penalty of out-of-consensus validation.
 Lower-stake validators may experience lower service priority, which can result in partial validation, or exploratory validators may skew weighting toward emergent high-utility.
@@ -187,6 +196,7 @@ Full bonds penalty $\beta=1$ may not be desired, due to the presence of non-adve
 We expect that greater bonds penalty will penalize out-of-consensus validators more, which means less emission going to cabals. Comprehensive simulation with $\beta = 0$, $0.5$, and $1$ respectively show 78%, 76%, and 73% honest utility requirement. This confirms the expectation, that greater bonds penalty means greater inflation going to the honest majority.
 
 #### Emission ratio (ξ)
+
 Subnet servers need incentive to deliver high utility, and subnet validators need rewards to secure the network.
 We expect that more emission going to validators will improve security guarantees, since self-serving validation can then be economically disincentivized.
 

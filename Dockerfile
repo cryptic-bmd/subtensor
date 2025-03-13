@@ -10,7 +10,7 @@ LABEL ai.opentensor.image.authors="operations@opentensor.ai" \
   ai.opentensor.image.vendor="Opentensor Foundation" \
   ai.opentensor.image.title="opentensor/subtensor" \
   ai.opentensor.image.description="Opentensor Subtensor Blockchain" \
-  ai.opentensor.image.documentation="https://docs.bittensor.com"
+  ai.opentensor.image.documentation="https://docs.zephyros.com"
 
 # Set up Rust environment
 ENV RUST_BACKTRACE=1

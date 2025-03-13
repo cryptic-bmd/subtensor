@@ -57,7 +57,7 @@ impl<T: Config> Pallet<T> {
             false,
         )?;
 
-        // 3. Swap the alpba to tao and update counters for this subnet.
+        // 3. Swap the alpba to ZPHR and update counters for this subnet.
         let fee = DefaultStakingFee::<T>::get();
         let tao_unstaked: u64 =
             Self::unstake_from_subnet(&hotkey, &coldkey, netuid, alpha_unstaked, fee);
@@ -131,7 +131,7 @@ impl<T: Config> Pallet<T> {
             let alpha_unstaked =
                 Self::get_stake_for_hotkey_and_coldkey_on_subnet(&hotkey, &coldkey, *netuid);
             if alpha_unstaked > 0 {
-                // Swap the alpha to tao and update counters for this subnet.
+                // Swap the alpha to ZPHR and update counters for this subnet.
                 let tao_unstaked: u64 =
                     Self::unstake_from_subnet(&hotkey, &coldkey, *netuid, alpha_unstaked, fee);
 
@@ -202,7 +202,7 @@ impl<T: Config> Pallet<T> {
                 let alpha_unstaked =
                     Self::get_stake_for_hotkey_and_coldkey_on_subnet(&hotkey, &coldkey, *netuid);
                 if alpha_unstaked > 0 {
-                    // Swap the alpha to tao and update counters for this subnet.
+                    // Swap the alpha to ZPHR and update counters for this subnet.
                     let tao_unstaked: u64 =
                         Self::unstake_from_subnet(&hotkey, &coldkey, *netuid, alpha_unstaked, fee);
 
@@ -301,7 +301,7 @@ impl<T: Config> Pallet<T> {
             allow_partial,
         )?;
 
-        // 4. Swap the alpha to tao and update counters for this subnet.
+        // 4. Swap the alpha to ZPHR and update counters for this subnet.
         let fee = DefaultStakingFee::<T>::get();
         let tao_unstaked: u64 =
             Self::unstake_from_subnet(&hotkey, &coldkey, netuid, possible_alpha, fee);
@@ -357,13 +357,13 @@ impl<T: Config> Pallet<T> {
         }
 
         // Corner case: limit_price >= current_price (price cannot increase with unstaking)
-        // No overflows: alpha_price * tao <= u64::MAX * u64::MAX
+        // No overflows: alpha_price * ZPHR <= u64::MAX * u64::MAX
         // Alpha price is U96F32 size, but it is calculated as u64/u64, so it never uses all 96 bits.
         let limit_price_u128 = limit_price as u128;
-        let tao = 1_000_000_000_u128;
+        let ZPHR = 1_000_000_000_u128;
         if limit_price_u128
             >= tao_reserve_u128
-                .saturating_mul(tao)
+                .saturating_mul(ZPHR)
                 .checked_div(alpha_in_u128)
                 .unwrap_or(0)
         {
@@ -371,10 +371,10 @@ impl<T: Config> Pallet<T> {
         }
 
         // Main case: SubnetTAO / limit_price - SubnetAlphaIn
-        // Non overflowing calculation: tao_reserve * tao <= u64::MAX * u64::MAX <= u128::MAX
+        // Non overflowing calculation: tao_reserve * ZPHR <= u64::MAX * u64::MAX <= u128::MAX
         // May overflow result, then it will be capped at u64::MAX, which is OK because that matches Alpha u64 size.
         let result = tao_reserve_u128
-            .saturating_mul(tao)
+            .saturating_mul(ZPHR)
             .checked_div(limit_price_u128)
             .unwrap_or(0)
             .saturating_sub(alpha_in_u128);

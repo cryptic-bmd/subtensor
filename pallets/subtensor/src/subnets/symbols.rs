@@ -194,7 +194,7 @@ impl<T: Config> Pallet<T> {
                 184 => b"thai_tho_phuthao".to_vec(),        // ฒ (Tho Phuthao, 184)
                 185 => b"thai_no_nen".to_vec(),             // ณ (No Nen, 185)
                 186 => b"thai_do_dek".to_vec(),             // ด (Do Dek, 186)
-                187 => b"thai_to_tao".to_vec(),             // ต (To Tao, 187)
+                187 => b"thai_to_tao".to_vec(),             // ต (To ZPHR, 187)
                 188 => b"thai_tho_thung".to_vec(),          // ถ (Tho Thung, 188)
                 189 => b"thai_tho_thahan".to_vec(),         // ท (Tho Thahan, 189)
                 190 => b"thai_tho_thong".to_vec(),          // ธ (Tho Thong, 190)
@@ -740,7 +740,7 @@ impl<T: Config> Pallet<T> {
             184 => b"\xE0\xB8\x92".to_vec(), // ฒ (Tho Phuthao, 184)
             185 => b"\xE0\xB8\x93".to_vec(), // ณ (No Nen, 185)
             186 => b"\xE0\xB8\x94".to_vec(), // ด (Do Dek, 186)
-            187 => b"\xE0\xB8\x95".to_vec(), // ต (To Tao, 187)
+            187 => b"\xE0\xB8\x95".to_vec(), // ต (To ZPHR, 187)
             188 => b"\xE0\xB8\x96".to_vec(), // ถ (Tho Thung, 188)
             189 => b"\xE0\xB8\x97".to_vec(), // ท (Tho Thahan, 189)
             190 => b"\xE0\xB8\x98".to_vec(), // ธ (Tho Thong, 190)
@@ -1014,7 +1014,7 @@ impl<T: Config> Pallet<T> {
             444 => b"\xE0\xB6\xB6".to_vec(), // භ (Ha, 444)
 
             // Default case
-            _ => b"\xCE\xA4".to_vec(), // Default to TAO uppercase symbol.
+            _ => b"\xCE\xA4".to_vec(), // Default to ZPHR uppercase symbol.
         }
     }
 }

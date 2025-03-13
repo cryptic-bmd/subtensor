@@ -703,7 +703,7 @@ pub enum ProxyType {
     NonCritical,
     NonTransfer,
     Senate,
-    NonFungibile, // Nothing involving moving TAO
+    NonFungibile, // Nothing involving moving ZPHR
     Triumvirate,
     Governance, // Both above governance
     Staking,
@@ -715,7 +715,7 @@ pub enum ProxyType {
     SudoUncheckedSetCode,
 }
 // Transfers below SMALL_TRANSFER_LIMIT are considered small transfers
-pub const SMALL_TRANSFER_LIMIT: Balance = 500_000_000; // 0.5 TAO
+pub const SMALL_TRANSFER_LIMIT: Balance = 500_000_000; // 0.5 ZPHR
 impl Default for ProxyType {
     fn default() -> Self {
         Self::Any
@@ -973,8 +973,8 @@ impl CanRegisterIdentity<AccountId> for AllowIdentityReg {
 // Configure registry pallet.
 parameter_types! {
     pub const MaxAdditionalFields: u32 = 1;
-    pub const InitialDeposit: Balance = 100_000_000; // 0.1 TAO
-    pub const FieldDeposit: Balance = 100_000_000; // 0.1 TAO
+    pub const InitialDeposit: Balance = 100_000_000; // 0.1 ZPHR
+    pub const FieldDeposit: Balance = 100_000_000; // 0.1 ZPHR
 }
 
 impl pallet_registry::Config for Runtime {
@@ -1066,9 +1066,9 @@ parameter_types! {
     pub const SubtensorInitialMinDifficulty: u64 = 10_000_000;
     pub const SubtensorInitialMaxDifficulty: u64 = u64::MAX / 4;
     pub const SubtensorInitialServingRateLimit: u64 = 50;
-    pub const SubtensorInitialBurn: u64 = 1_000_000_000; // 1 tao
+    pub const SubtensorInitialBurn: u64 = 1_000_000_000; // 1 ZPHR
     pub const SubtensorInitialMinBurn: u64 = 500_000; // 500k RAO
-    pub const SubtensorInitialMaxBurn: u64 = 100_000_000_000; // 100 tao
+    pub const SubtensorInitialMaxBurn: u64 = 100_000_000_000; // 100 ZPHR
     pub const SubtensorInitialTxRateLimit: u64 = 1000;
     pub const SubtensorInitialTxDelegateTakeRateLimit: u64 = 216000; // 30 days at 12 seconds per block
     pub const SubtensorInitialTxChildKeyTakeRateLimit: u64 = INITIAL_CHILDKEY_TAKE_RATELIMIT;
@@ -1076,19 +1076,19 @@ parameter_types! {
     pub const SubtensorInitialSenateRequiredStakePercentage: u64 = 1; // 1 percent of total stake
     pub const SubtensorInitialNetworkImmunity: u64 = 7 * 7200;
     pub const SubtensorInitialMinAllowedUids: u16 = 128;
-    pub const SubtensorInitialMinLockCost: u64 = 1_000_000_000_000; // 1000 TAO
+    pub const SubtensorInitialMinLockCost: u64 = 1_000_000_000_000; // 1000 ZPHR
     pub const SubtensorInitialSubnetOwnerCut: u16 = 11_796; // 18 percent
     pub const SubtensorInitialSubnetLimit: u16 = 12;
     pub const SubtensorInitialNetworkLockReductionInterval: u64 = 14 * 7200;
     pub const SubtensorInitialNetworkRateLimit: u64 = 7200;
-    pub const SubtensorInitialKeySwapCost: u64 = 100_000_000; // 0.1 TAO
+    pub const SubtensorInitialKeySwapCost: u64 = 100_000_000; // 0.1 ZPHR
     pub const InitialAlphaHigh: u16 = 58982; // Represents 0.9 as per the production default
     pub const InitialAlphaLow: u16 = 45875; // Represents 0.7 as per the production default
     pub const InitialLiquidAlphaOn: bool = false; // Default value for LiquidAlphaOn
     pub const SubtensorInitialNetworkMaxStake: u64 = u64::MAX; // Maximum possible value for u64, this make the make stake infinity
     pub const InitialColdkeySwapScheduleDuration: BlockNumber = 5 * 24 * 60 * 60 / 12; // 5 days
     pub const InitialDissolveNetworkScheduleDuration: BlockNumber = 5 * 24 * 60 * 60 / 12; // 5 days
-    pub const SubtensorInitialTaoWeight: u64 = 971_718_665_099_567_868; // 0.05267697438728329% tao weight.
+    pub const SubtensorInitialTaoWeight: u64 = 971_718_665_099_567_868; // 0.05267697438728329% ZPHR weight.
 }
 
 impl pallet_subtensor::Config for Runtime {
@@ -1272,7 +1272,7 @@ impl BalanceConverter for SubtensorEvmBalanceConverter {
     /// Convert from EVM balance (U256) to Substrate balance (u64)
     fn into_substrate_balance(value: U256) -> Option<U256> {
         if let Some(substrate_value) = value.checked_div(U256::from(EVM_TO_SUBSTRATE_DECIMALS)) {
-            // Ensure the result fits within the TAO balance type (u64)
+            // Ensure the result fits within the ZPHR balance type (u64)
             if substrate_value <= U256::from(u64::MAX) {
                 Some(substrate_value)
             } else {
@@ -2173,8 +2173,8 @@ fn check_whitelist() {
 #[test]
 fn test_into_substrate_balance_valid() {
     // Valid conversion within u64 range
-    let evm_balance = U256::from(1_000_000_000_000_000_000u128); // 1 TAO in EVM
-    let expected_substrate_balance = U256::from(1_000_000_000u128); // 1 TAO in Substrate
+    let evm_balance = U256::from(1_000_000_000_000_000_000u128); // 1 ZPHR in EVM
+    let expected_substrate_balance = U256::from(1_000_000_000u128); // 1 ZPHR in Substrate
 
     let result = SubtensorEvmBalanceConverter::into_substrate_balance(evm_balance);
     assert_eq!(result, Some(expected_substrate_balance));
@@ -2183,7 +2183,7 @@ fn test_into_substrate_balance_valid() {
 #[test]
 fn test_into_substrate_balance_large_value() {
     // Maximum valid balance for u64
-    let evm_balance = U256::from(u64::MAX) * U256::from(EVM_TO_SUBSTRATE_DECIMALS); // Max u64 TAO in EVM
+    let evm_balance = U256::from(u64::MAX) * U256::from(EVM_TO_SUBSTRATE_DECIMALS); // Max u64 ZPHR in EVM
     let expected_substrate_balance = U256::from(u64::MAX);
 
     let result = SubtensorEvmBalanceConverter::into_substrate_balance(evm_balance);
@@ -2203,8 +2203,8 @@ fn test_into_substrate_balance_exceeds_u64() {
 #[test]
 fn test_into_substrate_balance_precision_loss() {
     // EVM balance with precision loss
-    let evm_balance = U256::from(1_000_000_000_123_456_789u128); // 1 TAO + extra precision in EVM
-    let expected_substrate_balance = U256::from(1_000_000_000u128); // Truncated to 1 TAO in Substrate
+    let evm_balance = U256::from(1_000_000_000_123_456_789u128); // 1 ZPHR + extra precision in EVM
+    let expected_substrate_balance = U256::from(1_000_000_000u128); // Truncated to 1 ZPHR in Substrate
 
     let result = SubtensorEvmBalanceConverter::into_substrate_balance(evm_balance);
     assert_eq!(result, Some(expected_substrate_balance));
@@ -2223,8 +2223,8 @@ fn test_into_substrate_balance_zero_value() {
 #[test]
 fn test_into_evm_balance_valid() {
     // Valid conversion from Substrate to EVM
-    let substrate_balance = U256::from(1_000_000_000u128); // 1 TAO in Substrate
-    let expected_evm_balance = U256::from(1_000_000_000_000_000_000u128); // 1 TAO in EVM
+    let substrate_balance = U256::from(1_000_000_000u128); // 1 ZPHR in Substrate
+    let expected_evm_balance = U256::from(1_000_000_000_000_000_000u128); // 1 ZPHR in EVM
 
     let result = SubtensorEvmBalanceConverter::into_evm_balance(substrate_balance);
     assert_eq!(result, Some(expected_evm_balance));

@@ -1,4 +1,4 @@
-```commandline             _      _
+```commandline _      _
 ███████╗██╗   ██╗██████╗ ████████╗███████╗███╗   ██╗███████╗ ██████╗ ██████╗
 ██╔════╝██║   ██║██╔══██╗╚══██╔══╝██╔════╝████╗  ██║██╔════╝██╔═══██╗██╔══██╗
 ███████╗██║   ██║██████╔╝   ██║   █████╗  ██╔██╗ ██║███████╗██║   ██║██████╔╝
@@ -9,63 +9,70 @@
 ```
 
 # **Subtensor** <!-- omit in toc -->
-[![Discord Chat](https://img.shields.io/discord/308323056592486420.svg)](https://discord.gg/bittensor)
+
+[![Discord Chat](https://img.shields.io/discord/308323056592486420.svg)](https://discord.gg/zephyros)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-This repository contains Bittensor's substrate-chain. Subtensor contains the trusted logic which:
+This repository contains Zephyros's substrate-chain. Subtensor contains the trusted logic which:
 
-1. Runs Bittensor's [consensus mechanism](./docs/consensus.md);
+1. Runs Zephyros's [consensus mechanism](./docs/consensus.md);
 2. Advertises neuron information, IPs, etc., and
-3. Facilitates value transfer via TAO.
+3. Facilitates value transfer via ZPHR.
 
 ## System Requirements
 
-* The binaries in ./bin/release are x86_64 binaries to be used with the Linux kernel.
-* Subtensor needs ~286 MiB to run.
-*	Supported Architectures:
-	-	Linux: x86_64
-	-	MacOS: x86_64 and ARM64 (M series Macs)
-* OSs other than Linux and MacOS are currently not supported.
-
+- The binaries in ./bin/release are x86_64 binaries to be used with the Linux kernel.
+- Subtensor needs ~286 MiB to run.
+- Supported Architectures:
+  - Linux: x86_64
+  - MacOS: x86_64 and ARM64 (M series Macs)
+- OSs other than Linux and MacOS are currently not supported.
 
 ## Architectures
+
 Subtensor support the following architectures:
 
 ## Linux x86_64
+
 Requirements:
-* Linux kernel 2.6.32+,
-* glibc 2.11+
-A fresh FRAME-based [Substrate](https://www.substrate.io/) node, ready for hacking :rocket:
+
+- Linux kernel 2.6.32+,
+- glibc 2.11+
+  A fresh FRAME-based [Substrate](https://www.substrate.io/) node, ready for hacking :rocket:
 
 ## MacOS x86_64 & arm64 (Apple Silicon)
+
 Requirements:
-*	macOS 10.7+ (Lion+) for x86_64
-*	macOS 11+ (Big Sur+) for Apple Silicon (M1, M2, and later) with arm64 architecture support.
+
+- macOS 10.7+ (Lion+) for x86_64
+- macOS 11+ (Big Sur+) for Apple Silicon (M1, M2, and later) with arm64 architecture support.
 
 ## Network requirements
-* Subtensor needs access to the public internet
-* Subtensor runs on ipv4
-* Subtensor listens on the following ports:
-  1) 9944 - Websocket. This port is used by bittensor. It only accepts connections from localhost. Make sure this port is firewalled off from the public domain.
-  2) 9933 - RPC. This port is opened, but not used.
-  3) 30333 - p2p socket. This port accepts connections from other subtensor nodes. Make sure your firewall(s) allow incoming traffic to this port.
-* It is assumed your default outgoing traffic policy is ACCEPT. If not, make sure outbound traffic to port 30333 is allowed.
+
+- Subtensor needs access to the public internet
+- Subtensor runs on ipv4
+- Subtensor listens on the following ports:
+  1. 9944 - Websocket. This port is used by zephyros. It only accepts connections from localhost. Make sure this port is firewalled off from the public domain.
+  2. 9933 - RPC. This port is opened, but not used.
+  3. 30333 - p2p socket. This port accepts connections from other subtensor nodes. Make sure your firewall(s) allow incoming traffic to this port.
+- It is assumed your default outgoing traffic policy is ACCEPT. If not, make sure outbound traffic to port 30333 is allowed.
 
 ---
 
 ## For Subnet Development
 
-If you are developing and testing subnet incentive mechanism, you will need to run a local subtensor node. Follow the detailed step-by-step instructions provided in the [**Subtensor Nodes** section in Bittensor Developer Documentation](https://docs.bittensor.com/subtensor-nodes).
+If you are developing and testing subnet incentive mechanism, you will need to run a local subtensor node. Follow the detailed step-by-step instructions provided in the [**Subtensor Nodes** section in Zephyros Developer Documentation](https://docs.zephyros.com/subtensor-nodes).
 
 ### Lite node vs Archive node
 
-For an explanation of lite node, archive node and how you can run your local subtensor node in these modes, see [Lite node vs archive node](https://docs.bittensor.com/subtensor-nodes#lite-node-vs-archive-node) section on [Bittensor Developer Docs](https://docs.bittensor.com/).
+For an explanation of lite node, archive node and how you can run your local subtensor node in these modes, see [Lite node vs archive node](https://docs.zephyros.com/subtensor-nodes#lite-node-vs-archive-node) section on [Zephyros Developer Docs](https://docs.zephyros.com/).
 
 ---
 
 ## For Subtensor Development
 
 ### Installation
+
 First, complete the [basic Rust setup instructions](./docs/rust-setup.md).
 
 **Build and Run**
@@ -127,11 +134,13 @@ RUST_BACKTRACE=1 ./target/release/subtensor-ldebug --dev
 ```
 
 Running debug with logs.
+
 ```bash
 SKIP_WASM_BUILD=1 RUST_LOG=runtime=debug -- --nocapture
 ```
 
 Running individual tests
+
 ```bash
 SKIP_WASM_BUILD=1 \
   RUST_LOG=runtime=debug \
@@ -142,32 +151,32 @@ SKIP_WASM_BUILD=1 \
 <details>
   <summary>testing `tests/` tips</summary>
 
-  **`<package-name>`**
-  Available members are found within the project root [`./cargo.toml`](./cargo.toml) file, each
-  point to a sub-directory containing a `cargo.toml` file with a `name` defined.  for example,
-  [`node/cargo.toml`](./node/cargo.toml) has a name of `node-subtensor`
+**`<package-name>`**
+Available members are found within the project root [`./cargo.toml`](./cargo.toml) file, each
+point to a sub-directory containing a `cargo.toml` file with a `name` defined. for example,
+[`node/cargo.toml`](./node/cargo.toml) has a name of `node-subtensor`
 
+**`<test-name>`**
+Available tests are often found within either a `tests/` sub-directory or within the relevant
+`src/` file. for example [`./node/tests/chain_spec.rs`](./node/tests/chain_spec.rs) has a test
+named `chain_spec`
 
-  **`<test-name>`**
-  Available tests are often found within either a `tests/` sub-directory or within the relevant
-  `src/` file.  for example [`./node/tests/chain_spec.rs`](./node/tests/chain_spec.rs) has a test
-  named `chain_spec`
+**example**
+All together we can run all tests in `chain_spec` file from `node-subtensor` project via
 
-  **example**
-  All together we can run all tests in `chain_spec` file from `node-subtensor` project via
+```bash
+skip_wasm_build=1 \
+  rust_log=runtime=debug \
+  cargo test \
+  --package node-subtensor \
+  --test chain_spec \
+  -- --color always --nocapture
+```
 
-  ```bash
-  skip_wasm_build=1 \
-    rust_log=runtime=debug \
-    cargo test \
-    --package node-subtensor \
-    --test chain_spec \
-    -- --color always --nocapture
-  ```
 </details>
 
-
 Running code coverage
+
 ```bash
 bash scripts/code-coverage.sh
 ```
@@ -177,6 +186,7 @@ bash scripts/code-coverage.sh
 > running. Also, **alice** account will be authority and sudo account as declared in the
 > [genesis state](https://github.com/substrate-developer-hub/substrate-node-template/blob/main/node/src/chain_spec.rs#L49).
 > At the same time the following accounts will be pre-funded:
+>
 > - Alice
 > - Bob
 > - Alice//stash
@@ -336,6 +346,7 @@ by appending your own. A few useful ones are as follow.
 -->
 
 ## License
+
 The MIT License (MIT)
 Copyright © 2021 Yuma Rao
 
@@ -345,6 +356,6 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-
 ## Acknowledgments
+
 **parralax**

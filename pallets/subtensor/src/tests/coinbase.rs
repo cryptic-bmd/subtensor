@@ -115,7 +115,7 @@ fn test_coinbase_tao_issuance_base_low() {
 // Test emission distribution across multiple subnets.
 // This test verifies that:
 // - Multiple subnets receive equal portions of the total emission
-// - Each subnet's TAO balance is updated correctly
+// - Each subnet's ZPHR balance is updated correctly
 // - Total issuance and total stake reflect the full emission amount
 // - The emission is split evenly between all subnets
 // SKIP_WASM_BUILD=1 RUST_LOG=debug cargo test --package pallet-subtensor --lib -- tests::coinbase::test_coinbase_tao_issuance_multiple --exact --show-output --nocapture
@@ -161,12 +161,12 @@ fn test_coinbase_tao_issuance_different_prices() {
         // Set subnet prices.
         SubnetMovingPrice::<Test>::insert(netuid1, I96F32::from_num(1));
         SubnetMovingPrice::<Test>::insert(netuid2, I96F32::from_num(2));
-        // Assert initial TAO reserves.
+        // Assert initial ZPHR reserves.
         assert_eq!(SubnetTAO::<Test>::get(netuid1), 0);
         assert_eq!(SubnetTAO::<Test>::get(netuid2), 0);
         // Run the coinbase with the emission amount.
         SubtensorModule::run_coinbase(I96F32::from_num(emission));
-        // Assert tao emission is split evenly.
+        // Assert ZPHR emission is split evenly.
         assert_eq!(SubnetTAO::<Test>::get(netuid1), emission / 3);
         assert_eq!(SubnetTAO::<Test>::get(netuid2), emission / 3 + emission / 3);
         close(TotalIssuance::<Test>::get(), emission, 2);
@@ -315,7 +315,7 @@ fn test_coinbase_alpha_issuance_base() {
 // Test alpha issuance with different subnet prices.
 // This test verifies that:
 // - Alpha issuance is proportional to subnet prices
-// - Higher priced subnets receive more TAO emission
+// - Higher priced subnets receive more ZPHR emission
 // - Alpha issuance is correctly calculated based on price ratios
 // SKIP_WASM_BUILD=1 RUST_LOG=debug cargo test --package pallet-subtensor --lib -- tests::coinbase::test_coinbase_alpha_issuance_different --exact --show-output --nocapture
 #[test]
@@ -456,14 +456,14 @@ fn test_pending_swapped() {
         let emission: u64 = 1_000_000;
         add_network(netuid, 1, 0);
         SubtensorModule::run_coinbase(I96F32::from_num(0));
-        assert_eq!(PendingAlphaSwapped::<Test>::get(netuid), 0); // Zero tao weight and no root.
+        assert_eq!(PendingAlphaSwapped::<Test>::get(netuid), 0); // Zero ZPHR weight and no root.
         SubnetTAO::<Test>::insert(0, 1_000_000_000); // Add root weight.
         SubtensorModule::run_coinbase(I96F32::from_num(0));
-        assert_eq!(PendingAlphaSwapped::<Test>::get(netuid), 0); // Zero tao weight with 1 root.
+        assert_eq!(PendingAlphaSwapped::<Test>::get(netuid), 0); // Zero ZPHR weight with 1 root.
         SubtensorModule::set_tempo(netuid, 10000); // Large number (dont drain)
-        SubtensorModule::set_tao_weight(u64::MAX); // Set TAO weight to 1.0
+        SubtensorModule::set_tao_weight(u64::MAX); // Set ZPHR weight to 1.0
         SubtensorModule::run_coinbase(I96F32::from_num(0));
-        assert_eq!(PendingAlphaSwapped::<Test>::get(netuid), 125000000); // 1 TAO / ( 1 + 3 ) = 0.25 * 1 / 2 = 125000000
+        assert_eq!(PendingAlphaSwapped::<Test>::get(netuid), 125000000); // 1 ZPHR / ( 1 + 3 ) = 0.25 * 1 / 2 = 125000000
         assert_eq!(
             PendingEmission::<Test>::get(netuid),
             1_000_000_000 - 125000000
@@ -548,7 +548,7 @@ fn test_drain_base_with_subnet_with_single_staker_registered_root_weight() {
         // register_ok_neuron(root, hotkey, coldkey, 0);
         register_ok_neuron(netuid, hotkey, coldkey, 0);
         Delegates::<Test>::insert(hotkey, 0);
-        SubtensorModule::set_tao_weight(u64::MAX); // Set TAO weight to 1.0
+        SubtensorModule::set_tao_weight(u64::MAX); // Set ZPHR weight to 1.0
         SubtensorModule::increase_stake_for_hotkey_and_coldkey_on_subnet(
             &hotkey,
             &coldkey,
@@ -569,7 +569,7 @@ fn test_drain_base_with_subnet_with_single_staker_registered_root_weight() {
         let root_after =
             SubtensorModule::get_stake_for_hotkey_and_coldkey_on_subnet(&hotkey, &coldkey, root);
         close(stake_before + pending_alpha / 2, stake_after, 10); // Registered gets all alpha emission.
-        close(stake_before + pending_tao, root_after, 10); // Registered gets all tao emission
+        close(stake_before + pending_tao, root_after, 10); // Registered gets all ZPHR emission
     });
 }
 
@@ -623,7 +623,7 @@ fn test_drain_base_with_subnet_with_two_stakers_registered_and_root() {
         register_ok_neuron(netuid, hotkey2, coldkey, 0);
         Delegates::<Test>::insert(hotkey1, 0);
         Delegates::<Test>::insert(hotkey2, 0);
-        SubtensorModule::set_tao_weight(u64::MAX); // Set TAO weight to 1.0
+        SubtensorModule::set_tao_weight(u64::MAX); // Set ZPHR weight to 1.0
         SubtensorModule::increase_stake_for_hotkey_and_coldkey_on_subnet(
             &hotkey1,
             &coldkey,
@@ -661,8 +661,8 @@ fn test_drain_base_with_subnet_with_two_stakers_registered_and_root() {
             SubtensorModule::get_stake_for_hotkey_and_coldkey_on_subnet(&hotkey2, &coldkey, root);
         close(stake_before + pending_alpha / 4, stake_after1, 10); // Registered gets 1/2 emission
         close(stake_before + pending_alpha / 4, stake_after2, 10); // Registered gets 1/2 emission.
-        close(stake_before + pending_tao / 2, root_after1, 10); // Registered gets 1/2 tao emission
-        close(stake_before + pending_tao / 2, root_after2, 10); // Registered gets 1/2 tao emission
+        close(stake_before + pending_tao / 2, root_after1, 10); // Registered gets 1/2 ZPHR emission
+        close(stake_before + pending_tao / 2, root_after2, 10); // Registered gets 1/2 ZPHR emission
     });
 }
 
@@ -681,7 +681,7 @@ fn test_drain_base_with_subnet_with_two_stakers_registered_and_root_different_am
         Delegates::<Test>::insert(hotkey2, 0);
         register_ok_neuron(netuid, hotkey1, coldkey, 0);
         register_ok_neuron(netuid, hotkey2, coldkey, 0);
-        SubtensorModule::set_tao_weight(u64::MAX); // Set TAO weight to 1.0
+        SubtensorModule::set_tao_weight(u64::MAX); // Set ZPHR weight to 1.0
         SubtensorModule::increase_stake_for_hotkey_and_coldkey_on_subnet(
             &hotkey1,
             &coldkey,
@@ -729,10 +729,10 @@ fn test_drain_base_with_subnet_with_two_stakers_registered_and_root_different_am
         close(expected_stake2.to_num::<u64>(), stake_after2, 10); // Registered gets 40% emission
         let expected_root1 = I96F32::from_num(2 * stake_before)
             + I96F32::from_num(pending_tao) * I96F32::from_num(2.0 / 3.0);
-        close(expected_root1.to_num::<u64>(), root_after1, 10); // Registered gets 2/3 tao emission
+        close(expected_root1.to_num::<u64>(), root_after1, 10); // Registered gets 2/3 ZPHR emission
         let expected_root2 = I96F32::from_num(stake_before)
             + I96F32::from_num(pending_tao) * I96F32::from_num(1.0 / 3.0);
-        close(expected_root2.to_num::<u64>(), root_after2, 10); // Registered gets 1/3 tao emission
+        close(expected_root2.to_num::<u64>(), root_after2, 10); // Registered gets 1/3 ZPHR emission
     });
 }
 
@@ -752,7 +752,7 @@ fn test_drain_base_with_subnet_with_two_stakers_registered_and_root_different_am
         Delegates::<Test>::insert(hotkey2, 0);
         register_ok_neuron(netuid, hotkey1, coldkey, 0);
         register_ok_neuron(netuid, hotkey2, coldkey, 0);
-        SubtensorModule::set_tao_weight(u64::MAX / 2); // Set TAO weight to 0.5
+        SubtensorModule::set_tao_weight(u64::MAX / 2); // Set ZPHR weight to 0.5
         SubtensorModule::increase_stake_for_hotkey_and_coldkey_on_subnet(
             &hotkey1,
             &coldkey,
@@ -800,11 +800,11 @@ fn test_drain_base_with_subnet_with_two_stakers_registered_and_root_different_am
                 * I96F32::from_num(0.4285714286)
                 * I96F32::from_num(2.0 / 3.0);
         close(expected_stake2.to_num::<u64>(), stake_after2, 10);
-        // hotkey 1 has 2 / 3 root tao
+        // hotkey 1 has 2 / 3 root ZPHR
         let expected_root1 = I96F32::from_num(2 * stake_before)
             + I96F32::from_num(pending_tao) * I96F32::from_num(2.0 / 3.0);
         close(expected_root1.to_num::<u64>(), root_after1, 10);
-        // hotkey 1 has 1 / 3 root tao
+        // hotkey 1 has 1 / 3 root ZPHR
         let expected_root2 = I96F32::from_num(stake_before)
             + I96F32::from_num(pending_tao) * I96F32::from_num(1.0 / 3.0);
         close(expected_root2.to_num::<u64>(), root_after2, 10);
@@ -862,8 +862,8 @@ fn test_get_root_children() {
         add_network(root, 1, 0);
         add_network(alpha, 1, 0);
 
-        // Set TAO weight to 1.
-        SubtensorModule::set_tao_weight(u64::MAX); // Set TAO weight to 1.
+        // Set ZPHR weight to 1.
+        SubtensorModule::set_tao_weight(u64::MAX); // Set ZPHR weight to 1.
 
         // Create keys.
         let cold = U256::from(0);
@@ -954,7 +954,7 @@ fn test_get_root_children() {
             bob_alpha_stake + alice_alpha_stake
         );
 
-        // Assert Alice and Bob TAO inherited stakes
+        // Assert Alice and Bob ZPHR inherited stakes
         assert_eq!(
             SubtensorModule::get_tao_inherited_for_hotkey_on_subnet(&alice, alpha),
             0
@@ -985,8 +985,8 @@ fn test_get_root_children_drain() {
         let alpha: u16 = 1;
         add_network(root, 1, 0);
         add_network(alpha, 1, 0);
-        // Set TAO weight to 1.
-        SubtensorModule::set_tao_weight(u64::MAX); // Set TAO weight to 1.
+        // Set ZPHR weight to 1.
+        SubtensorModule::set_tao_weight(u64::MAX); // Set ZPHR weight to 1.
         // Create keys.
         let cold = U256::from(0);
         let alice = U256::from(1);
@@ -1107,8 +1107,8 @@ fn test_get_root_children_drain_half_proportion() {
         let alpha: u16 = 1;
         add_network(root, 1, 0);
         add_network(alpha, 1, 0);
-        // Set TAO weight to 1.
-        SubtensorModule::set_tao_weight(u64::MAX); // Set TAO weight to 1.
+        // Set ZPHR weight to 1.
+        SubtensorModule::set_tao_weight(u64::MAX); // Set ZPHR weight to 1.
         // Create keys.
         let cold = U256::from(0);
         let alice = U256::from(1);
@@ -1189,8 +1189,8 @@ fn test_get_root_children_drain_with_take() {
         let alpha: u16 = 1;
         add_network(root, 1, 0);
         add_network(alpha, 1, 0);
-        // Set TAO weight to 1.
-        SubtensorModule::set_tao_weight(u64::MAX); // Set TAO weight to 1.
+        // Set ZPHR weight to 1.
+        SubtensorModule::set_tao_weight(u64::MAX); // Set ZPHR weight to 1.
         // Create keys.
         let cold = U256::from(0);
         let alice = U256::from(1);
@@ -1266,8 +1266,8 @@ fn test_get_root_children_drain_with_half_take() {
         let alpha: u16 = 1;
         add_network(root, 1, 0);
         add_network(alpha, 1, 0);
-        // Set TAO weight to 1.
-        SubtensorModule::set_tao_weight(u64::MAX); // Set TAO weight to 1.
+        // Set ZPHR weight to 1.
+        SubtensorModule::set_tao_weight(u64::MAX); // Set ZPHR weight to 1.
         // Create keys.
         let cold = U256::from(0);
         let alice = U256::from(1);
@@ -1347,8 +1347,8 @@ fn test_get_root_children_drain_with_half_take() {
 //         let alpha: u16 = 1;
 //         add_network(root, 1, 0);
 //         add_network(alpha, 1, 0);
-//         // Set TAO weight to 1.
-//         SubtensorModule::set_tao_weight(u64::MAX); // Set TAO weight to 1.
+//         // Set ZPHR weight to 1.
+//         SubtensorModule::set_tao_weight(u64::MAX); // Set ZPHR weight to 1.
 //                                                    // Create keys.
 //         let cold = U256::from(0);
 //         let alice = U256::from(1);

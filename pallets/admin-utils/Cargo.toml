@@ -2,8 +2,8 @@
 name = "pallet-admin-utils"
 version = "4.0.0-dev"
 description = "FRAME pallet for extending admin utilities."
-authors = ["Bittensor Nucleus Team"]
-homepage = "https://bittensor.com"
+authors = ["Zephyros Nucleus Team"]
+homepage = "https://zephyros.com"
 edition = "2024"
 license = "Unlicense"
 publish = false

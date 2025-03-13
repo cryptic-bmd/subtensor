@@ -4,21 +4,21 @@ use safe_math::*;
 use substrate_fixed::{transcendental::log2, types::I96F32};
 
 impl<T: Config> Pallet<T> {
-    /// Calculates the dynamic TAO emission for a given subnet.
+    /// Calculates the dynamic ZPHR emission for a given subnet.
     ///
     /// This function determines the three terms tao_in, alpha_in, alpha_out
-    /// which are consecutively, 1) the amount of tao injected into the pool
+    /// which are consecutively, 1) the amount of ZPHR injected into the pool
     /// 2) the amount of alpha injected into the pool, and 3) the amount of alpha
     /// left to be distributed towards miners/validators/owners per block.
     ///
     /// # Arguments
     /// * `netuid` - The unique identifier of the subnet.
-    /// * `tao_emission` - The amount of tao to distribute for this subnet.
+    /// * `tao_emission` - The amount of ZPHR to distribute for this subnet.
     /// * `alpha_block_emission` - The maximum alpha emission allowed for the block.
     ///
     /// # Returns
     /// * `(u64, u64, u64)` - A tuple containing:
-    ///   - `tao_in_emission`: The adjusted TAO emission always lower or equal to tao_emission
+    ///   - `tao_in_emission`: The adjusted ZPHR emission always lower or equal to tao_emission
     ///   - `alpha_in_emission`: The adjusted alpha emission amount to be added into the pool.
     ///   - `alpha_out_emission`: The remaining alpha emission after adjustments to be distributed to miners/validators.
     ///

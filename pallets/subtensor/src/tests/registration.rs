@@ -300,7 +300,7 @@ fn test_burned_registration_under_limit() {
         SubtensorModule::set_burn(netuid, burn_cost);
 
         add_network(netuid, 13, 0); // Add the network
-        // Give it some TAO to the coldkey balance; more than the burn cost
+        // Give it some ZPHR to the coldkey balance; more than the burn cost
         SubtensorModule::add_balance_to_coldkey_account(&coldkey_account_id, burn_cost + 10_000);
 
         let target_registrants = 2;
@@ -383,7 +383,7 @@ fn test_burned_registration_rate_allows_burn_adjustment() {
         SubtensorModule::set_burn(netuid, burn_cost);
 
         add_network(netuid, 13, 0); // Add the network
-        // Give it some TAO to the coldkey balance; more than the burn cost
+        // Give it some ZPHR to the coldkey balance; more than the burn cost
         SubtensorModule::add_balance_to_coldkey_account(&coldkey_account_id, burn_cost + 10_000);
 
         let target_registrants = 1; // Target is 1, but we can register more than that, up to some maximum.
@@ -1493,7 +1493,7 @@ fn test_burn_registration_increase_recycled_rao() {
         let hotkey_account_id = U256::from(1);
         let coldkey_account_id = U256::from(667);
 
-        // Give funds for burn. 1000 TAO
+        // Give funds for burn. 1000 ZPHR
         let _ =
             Balances::deposit_creating(&coldkey_account_id, Balance::from(1_000_000_000_000_u64));
 

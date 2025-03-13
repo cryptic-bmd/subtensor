@@ -6,7 +6,7 @@ license = "MIT"
 
 description = "support tools for Subtensor"
 repository = "https://github.com/opentensor/subtensor"
-homepage = "https://bittensor.com"
+homepage = "https://zephyros.com"
 
 [[bin]]
 name = "bump-version"

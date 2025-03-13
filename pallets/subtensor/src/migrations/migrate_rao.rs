@@ -34,7 +34,7 @@ pub fn migrate_rao<T: Config>() -> Weight {
     // Set the Dynamic block.
     DynamicBlock::<T>::set(Pallet::<T>::get_current_block_as_u64());
 
-    // Migrate all TAO to root.
+    // Migrate all ZPHR to root.
     // This migration has already run, leaving this only for reference for now, since this is a recent migration
     // Stake::<T>::iter().for_each(|(hotkey, coldkey, stake)| {
     //     // Increase SubnetTAO on root.
@@ -64,7 +64,7 @@ pub fn migrate_rao<T: Config>() -> Weight {
     // Set global weight to 18% from the start
     // Set min lock
     NetworkMinLockCost::<T>::set(1_000_000_000);
-    // Set tao weight.
+    // Set ZPHR weight.
     TaoWeight::<T>::set(3_320_413_933_267_719_290);
     for netuid in netuids.iter().clone() {
         if *netuid == 0 {
@@ -77,8 +77,8 @@ pub fn migrate_rao<T: Config>() -> Weight {
         let owner = SubnetOwner::<T>::get(netuid);
         let lock = SubnetLocked::<T>::get(netuid);
 
-        // Put initial TAO from lock into subnet TAO and produce numerically equal amount of Alpha
-        // The initial TAO is the locked amount, with a minimum of 1 RAO and a cap of 100 TAO.
+        // Put initial ZPHR from lock into subnet ZPHR and produce numerically equal amount of Alpha
+        // The initial ZPHR is the locked amount, with a minimum of 1 RAO and a cap of 100 ZPHR.
         let pool_initial_tao = Pallet::<T>::get_network_min_lock();
         if lock < pool_initial_tao {
             let difference: u64 = pool_initial_tao.saturating_sub(lock);
@@ -101,7 +101,7 @@ pub fn migrate_rao<T: Config>() -> Weight {
         TotalStake::<T>::mutate(|total| {
             *total = total.saturating_add(pool_initial_tao);
         }); // Increase total stake.
-        SubnetAlphaIn::<T>::insert(netuid, pool_initial_tao); // Set initial alpha to pool initial tao.
+        SubnetAlphaIn::<T>::insert(netuid, pool_initial_tao); // Set initial alpha to pool initial ZPHR.
         SubnetAlphaOut::<T>::insert(netuid, 0); // Set zero subnet alpha out.
         SubnetMechanism::<T>::insert(netuid, 1); // Convert to dynamic immediately with initialization.
 

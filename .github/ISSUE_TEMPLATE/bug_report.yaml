@@ -45,8 +45,8 @@ body:
     id: environment
     attributes:
       label: Environment
-      description: Please specify your OS and Distro, and Bittensor Version.
-      placeholder: "OS and Distro: [e.g. Linux Ubuntu, Linux Fedora, etc.], Bittensor Version [e.g. 22]"
+      description: Please specify your OS and Distro, and Zephyros Version.
+      placeholder: "OS and Distro: [e.g. Linux Ubuntu, Linux Fedora, etc.], Zephyros Version [e.g. 22]"
     validations:
       required: true
 

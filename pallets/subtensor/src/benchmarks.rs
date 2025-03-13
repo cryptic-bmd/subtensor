@@ -138,7 +138,7 @@ benchmarks! {
     let modality: u16 = 0;
     let seed : u32 = 1;
 
-    // Set our total stake to 1000 TAO
+    // Set our total stake to 1000 ZPHR
     Subtensor::<T>::increase_total_stake(1_000_000_000_000);
 
     Subtensor::<T>::init_new_network(netuid, tempo);
@@ -156,7 +156,7 @@ benchmarks! {
 
     assert_ok!(Subtensor::<T>::do_burned_registration(RawOrigin::Signed(coldkey.clone()).into(), netuid, hotkey.clone()));
 
-      // Stake 10% of our current total staked TAO
+      // Stake 10% of our current total staked ZPHR
       let u64_staked_amt = 100_000_000_000;
     Subtensor::<T>::add_balance_to_coldkey_account(&coldkey.clone(), u64_staked_amt);
 

@@ -16,7 +16,7 @@ pub struct DelegateInfo<AccountId: TypeInfo + Encode + Decode> {
     pub owner_ss58: AccountId,
     pub registrations: Vec<Compact<u16>>, // Vec of netuid this delegate is registered on
     pub validator_permits: Vec<Compact<u16>>, // Vec of netuid this delegate has validator permit on
-    pub return_per_1000: Compact<u64>, // Delegators current daily return per 1000 TAO staked minus take fee
+    pub return_per_1000: Compact<u64>, // Delegators current daily return per 1000 ZPHR staked minus take fee
     pub total_daily_return: Compact<u64>, // Delegators current daily return
 }
 
@@ -33,7 +33,7 @@ impl<T: Config> Pallet<T> {
         if total_stake > U64F64::saturating_from_num(0) {
             emissions_per_day
                 .saturating_mul(without_take)
-                // Divide by 1000 TAO for return per 1k
+                // Divide by 1000 ZPHR for return per 1k
                 .safe_div(total_stake.safe_div(U64F64::saturating_from_num(1000.0 * 1e9)))
         } else {
             U64F64::saturating_from_num(0)

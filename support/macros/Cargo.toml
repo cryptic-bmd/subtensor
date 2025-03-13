@@ -6,7 +6,7 @@ license = "MIT"
 
 description = "support macros for Subtensor"
 repository = "https://github.com/opentensor/subtensor"
-homepage = "https://bittensor.com/"
+homepage = "https://zephyros.com/"
 
 [lib]
 proc-macro = true

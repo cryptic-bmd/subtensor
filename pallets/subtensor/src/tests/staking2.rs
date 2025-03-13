@@ -13,13 +13,13 @@ use substrate_fixed::types::I96F32;
 fn test_stake_base_case() {
     new_test_ext(1).execute_with(|| {
         let netuid = 1;
-        let tao_to_swap = 1_000_000_000; // 1 TAO
+        let tao_to_swap = 1_000_000_000; // 1 ZPHR
 
         // Set up the subnet with dynamic mechanism
         SubnetMechanism::<Test>::insert(netuid, 1);
 
-        // Initialize subnet with some existing TAO and Alpha
-        let initial_subnet_tao = 10_000_000_000; // 10 TAO
+        // Initialize subnet with some existing ZPHR and Alpha
+        let initial_subnet_tao = 10_000_000_000; // 10 ZPHR
         let initial_subnet_alpha = 5_000_000_000; // 5 Alpha
         SubnetTAO::<Test>::insert(netuid, initial_subnet_tao);
         SubnetAlphaIn::<Test>::insert(netuid, initial_subnet_alpha);
@@ -47,7 +47,7 @@ fn test_stake_base_case() {
         assert_eq!(
             SubnetTAO::<Test>::get(netuid),
             initial_subnet_tao + tao_to_swap,
-            "Subnet TAO not updated correctly"
+            "Subnet ZPHR not updated correctly"
         );
         assert_eq!(
             SubnetAlphaIn::<Test>::get(netuid),
@@ -81,7 +81,7 @@ fn test_share_based_staking() {
         let netuid = 1;
         let primary_hotkey = U256::from(1);
         let primary_coldkey = U256::from(2);
-        let stake_amount = 1_000_000_000; // 1 TAO
+        let stake_amount = 1_000_000_000; // 1 ZPHR
 
         // Test Case 1: Initial Stake
         // The first stake should create shares 1:1 with the staked amount

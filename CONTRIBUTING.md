@@ -24,46 +24,46 @@
    working properly. If it is not working and additional changes are needed, please coordinate
    with a core team administrator and/or open up a new PR into `devnet` either reverting your
    changes or making any required changes in order for the feature to function properly.
-7.  On the appropriate date, an administrator will open a PR merging the current `devnet`
-    branch into `testnet`. This PR should include a bulleted list of all PRs included in the
-    deploy so they can be easily found after the fact (TODO: automate this). This PR is merged,
+7. On the appropriate date, an administrator will open a PR merging the current `devnet`
+   branch into `testnet`. This PR should include a bulleted list of all PRs included in the
+   deploy so they can be easily found after the fact (TODO: automate this). This PR is merged,
    the administrator will deploy `testnet` and cut a (pre-release) release in GitHub for
-    `testnet` (TODO: github action to generate the release and release notes).
-11. It is now your responsibility to once again check that your feature/change/fix is working
-    properly, this time on `testnet`. Once again if it is not working or additional changes are
-    needed, please coordinate with a core team administrator ASAP and/or open up a new PR into
-    `testnet` either reverting your changes or making any required changes in order for the
-    feature to function properly.
-12. At some point the administrator will merge current `testnet` into `main` and cut a new
-    deploy to mainnet/finney.
+   `testnet` (TODO: github action to generate the release and release notes).
+8. It is now your responsibility to once again check that your feature/change/fix is working
+   properly, this time on `testnet`. Once again if it is not working or additional changes are
+   needed, please coordinate with a core team administrator ASAP and/or open up a new PR into
+   `testnet` either reverting your changes or making any required changes in order for the
+   feature to function properly.
+9. At some point the administrator will merge current `testnet` into `main` and cut a new
+   deploy to mainnet/finney.
 
 ## PR Labels
 
-| Name  | Description | Automations |
-| ----- | ----------- | ----------- |
-| `red-team` | PR is focused on feature additions/changes | none |
-| `blue-team` | PR is focused on preventative/safety measures and/or dev UX improvements | none |
-| `runtime` | PR contains substantive changes to runtime / pallet code | none |
-| `breaking-change` | PR requires synchronized changes with bittensor | Triggers an automatic bot message so the relevant teams are made aware of the change well in advance |
+| Name              | Description                                                              | Automations                                                                                          |
+| ----------------- | ------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------- |
+| `red-team`        | PR is focused on feature additions/changes                               | none                                                                                                 |
+| `blue-team`       | PR is focused on preventative/safety measures and/or dev UX improvements | none                                                                                                 |
+| `runtime`         | PR contains substantive changes to runtime / pallet code                 | none                                                                                                 |
+| `breaking-change` | PR requires synchronized changes with zephyros                           | Triggers an automatic bot message so the relevant teams are made aware of the change well in advance |
 
 ## Branches
-
 
 ### `devnet-ready`
 
 All new feature/change/fix PRs should merge into this branch.
 
 #### Restrictions
-* no deleting the branch
-* no force pushes
-* no direct pushes
-* require 3 positive review from an administrator
-* new code changes do _not_ invalidate existing reviews
-* only merge commit style merging allowed
+
+- no deleting the branch
+- no force pushes
+- no direct pushes
+- require 3 positive review from an administrator
+- new code changes do _not_ invalidate existing reviews
+- only merge commit style merging allowed
 
 #### CI-Enforced Restrictions
-* `check-rust.yml` must pass
 
+- `check-rust.yml` must pass
 
 ### `devnet`
 
@@ -71,19 +71,20 @@ Tracks the current state of what is deployed to `devnet`. Modified by an adminis
 merging `devnet-ready` into `devnet`, in concert with a deploy of `devnet`.
 
 #### Restrictions
-* no deleting the branch
-* no force pushes
-* no direct pushes
-* require 2 positive reviews from core team members
-* new code changes invalidate existing reviews
-* only merge commit style merging allowed
+
+- no deleting the branch
+- no force pushes
+- no direct pushes
+- require 2 positive reviews from core team members
+- new code changes invalidate existing reviews
+- only merge commit style merging allowed
 
 #### CI-Enforced Restrictions
-* `check-rust.yml` must pass
-* `check-devnet.yml` must pass
-* spec_version must be greater than what is currently on live `devnet`
-* TODO: other pre-deploy sanity checks here
 
+- `check-rust.yml` must pass
+- `check-devnet.yml` must pass
+- spec_version must be greater than what is currently on live `devnet`
+- TODO: other pre-deploy sanity checks here
 
 ### `testnet`
 
@@ -92,19 +93,20 @@ current `devnet` into `testnet` and merge it in concert with a deploy to `testne
 tags for `testnet` releases.
 
 #### Restrictions
-* no deleting the branch
-* no force pushes
-* no direct pushes
-* require 2 positive reviews from core team members
-* new code changes invalidate existing reviews
-* only merge commit style merging allowed
+
+- no deleting the branch
+- no force pushes
+- no direct pushes
+- require 2 positive reviews from core team members
+- new code changes invalidate existing reviews
+- only merge commit style merging allowed
 
 #### CI-Enforced Restrictions
-* `check-rust.yml` must pass
-* `check-testnet.yml` must pass
-* spec_version must be greater than what is currently on live `testnet`
-* TODO: other pre-deploy sanity checks here
 
+- `check-rust.yml` must pass
+- `check-testnet.yml` must pass
+- spec_version must be greater than what is currently on live `testnet`
+- TODO: other pre-deploy sanity checks here
 
 ### `main`
 
@@ -112,15 +114,17 @@ Tracks the current state of what is deployed to `finney` (mainnet). Updated via 
 administrator-submitted PR merging `testnet` into `main` in concert with a `finney` deploy.
 
 #### Restrictions
-* no deleting the branch
-* no force pushes
-* no direct pushes
-* require 3 positive reviews from core team members
-* new code changes invalidate existing reviews
-* only merge commit style merging allowed
+
+- no deleting the branch
+- no force pushes
+- no direct pushes
+- require 3 positive reviews from core team members
+- new code changes invalidate existing reviews
+- only merge commit style merging allowed
 
 #### CI-Enforced Restrictions
-* `check-rust.yml` must pass
-* `check-finney.yml` must pass
-* `spec_version` must be greater than what is currently on live `finney`
-* TODO: other pre-deploy sanity checks here
+
+- `check-rust.yml` must pass
+- `check-finney.yml` must pass
+- `spec_version` must be greater than what is currently on live `finney`
+- TODO: other pre-deploy sanity checks here

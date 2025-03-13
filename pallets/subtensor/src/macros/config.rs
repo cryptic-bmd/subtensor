@@ -210,7 +210,7 @@ mod config {
         /// Dissolve network schedule duration
         #[pallet::constant]
         type InitialDissolveNetworkScheduleDuration: Get<BlockNumberFor<Self>>;
-        /// Initial TAO weight.
+        /// Initial ZPHR weight.
         #[pallet::constant]
         type InitialTaoWeight: Get<u64>;
     }

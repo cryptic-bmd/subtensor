@@ -330,7 +330,7 @@ impl<T: Config> Pallet<T> {
             check_transfer_toggle,
         )?;
 
-        // Unstake from the origin subnet, returning TAO (or a 1:1 equivalent).
+        // Unstake from the origin subnet, returning ZPHR (or a 1:1 equivalent).
         let fee = DefaultStakingFee::<T>::get().safe_div(2);
         let tao_unstaked = Self::unstake_from_subnet(
             origin_hotkey,
@@ -365,7 +365,7 @@ impl<T: Config> Pallet<T> {
     /// limit_price.
     ///
     /// ```ignore
-    /// The TAO we get from unstaking is
+    /// The ZPHR we get from unstaking is
     ///     unstaked_tao = subnet_tao(1) - alpha_in(1) * subnet_tao(1) / (alpha_in(1) + unstaked_alpha)
     ///
     /// The Alpha we get from staking is
@@ -387,7 +387,7 @@ impl<T: Config> Pallet<T> {
         destination_netuid: u16,
         limit_price: u64,
     ) -> u64 {
-        let tao: U64F64 = U64F64::saturating_from_num(1_000_000_000);
+        let ZPHR: U64F64 = U64F64::saturating_from_num(1_000_000_000);
 
         // Corner case: both subnet IDs are root or stao
         // There's no slippage for root or stable subnets, so slippage is always 0.
@@ -397,7 +397,7 @@ impl<T: Config> Pallet<T> {
             && ((destination_netuid == Self::get_root_netuid())
                 || (SubnetMechanism::<T>::get(destination_netuid)) == 0)
         {
-            if limit_price > tao.saturating_to_num::<u64>() {
+            if limit_price > ZPHR.saturating_to_num::<u64>() {
                 return 0;
             } else {
                 return u64::MAX;
@@ -414,9 +414,9 @@ impl<T: Config> Pallet<T> {
                 return u64::MAX;
             } else {
                 // The destination price is reverted because the limit_price is origin_price / destination_price
-                let destination_subnet_price = tao
+                let destination_subnet_price = ZPHR
                     .safe_div(U64F64::saturating_from_num(limit_price))
-                    .saturating_mul(tao)
+                    .saturating_mul(ZPHR)
                     .saturating_to_num::<u64>();
                 return Self::get_max_amount_add(destination_netuid, destination_subnet_price);
             }

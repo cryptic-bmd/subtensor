@@ -102,7 +102,7 @@ pub mod pallet {
     const STORAGE_VERSION: StorageVersion = StorageVersion::new(7);
 
     /// Minimum balance required to perform a coldkey swap
-    pub const MIN_BALANCE_TO_PERFORM_COLDKEY_SWAP: u64 = 100_000_000; // 0.1 TAO in RAO
+    pub const MIN_BALANCE_TO_PERFORM_COLDKEY_SWAP: u64 = 100_000_000; // 0.1 ZPHR in RAO
 
     #[pallet::pallet]
     #[pallet::without_storage_info]
@@ -819,14 +819,14 @@ pub mod pallet {
     /// ============================
     /// ==== Staking Variables ====
     /// ============================
-    /// The Subtensor [`TotalIssuance`] represents the total issuance of tokens on the Bittensor network.
+    /// The Subtensor [`TotalIssuance`] represents the total issuance of tokens on the Zephyros network.
     ///
     /// It is comprised of three parts:
     /// - The total amount of issued tokens, tracked in the TotalIssuance of the Balances pallet
     /// - The total amount of tokens staked in the system, tracked in [`TotalStake`]
     /// - The total amount of tokens locked up for subnet reg, tracked in [`TotalSubnetLocked`] attained by iterating over subnet lock.
     ///
-    /// Eventually, Bittensor should migrate to using Holds afterwhich time we will not require this
+    /// Eventually, Zephyros should migrate to using Holds afterwhich time we will not require this
     /// separate accounting.
     #[pallet::storage]
     /// --- ITEM --> Global weight
@@ -955,14 +955,14 @@ pub mod pallet {
     /// ==========================
     /// ==== Staking Counters ====
     /// ==========================
-    /// The Subtensor [`TotalIssuance`] represents the total issuance of tokens on the Bittensor network.
+    /// The Subtensor [`TotalIssuance`] represents the total issuance of tokens on the Zephyros network.
     ///
     /// It is comprised of three parts:
     /// - The total amount of issued tokens, tracked in the TotalIssuance of the Balances pallet
     /// - The total amount of tokens staked in the system, tracked in [`TotalStake`]
     /// - The total amount of tokens locked up for subnet reg, tracked in [`TotalSubnetLocked`] attained by iterating over subnet lock.
     ///
-    /// Eventually, Bittensor should migrate to using Holds afterwhich time we will not require this
+    /// Eventually, Zephyros should migrate to using Holds afterwhich time we will not require this
     /// separate accounting.
     #[pallet::storage] // --- ITEM ( total_issuance )
     pub type TotalIssuance<T> = StorageValue<_, u64, ValueQuery, DefaultTotalIssuance<T>>;
@@ -975,10 +975,10 @@ pub mod pallet {
     #[pallet::storage] // --- MAP ( netuid ) --> moving_price | The subnet moving price.
     pub type SubnetMovingPrice<T: Config> =
         StorageMap<_, Identity, u16, I96F32, ValueQuery, DefaultMovingPrice<T>>;
-    #[pallet::storage] // --- MAP ( netuid ) --> total_volume | The total amount of TAO bought and sold since the start of the network.
+    #[pallet::storage] // --- MAP ( netuid ) --> total_volume | The total amount of ZPHR bought and sold since the start of the network.
     pub type SubnetVolume<T: Config> =
         StorageMap<_, Identity, u16, u128, ValueQuery, DefaultZeroU128<T>>;
-    #[pallet::storage] // --- MAP ( netuid ) --> tao_in_subnet | Returns the amount of TAO in the subnet.
+    #[pallet::storage] // --- MAP ( netuid ) --> tao_in_subnet | Returns the amount of ZPHR in the subnet.
     pub type SubnetTAO<T: Config> =
         StorageMap<_, Identity, u16, u64, ValueQuery, DefaultZeroU64<T>>;
     #[pallet::storage] // --- MAP ( netuid ) --> alpha_in_emission | Returns the amount of alph in  emission into the pool per block.
@@ -987,7 +987,7 @@ pub mod pallet {
     #[pallet::storage] // --- MAP ( netuid ) --> alpha_out_emission | Returns the amount of alpha out emission into the network per block.
     pub type SubnetAlphaOutEmission<T: Config> =
         StorageMap<_, Identity, u16, u64, ValueQuery, DefaultZeroU64<T>>;
-    #[pallet::storage] // --- MAP ( netuid ) --> tao_in_emission | Returns the amount of tao emitted into this subent on the last block.
+    #[pallet::storage] // --- MAP ( netuid ) --> tao_in_emission | Returns the amount of ZPHR emitted into this subent on the last block.
     pub type SubnetTaoInEmission<T: Config> =
         StorageMap<_, Identity, u16, u64, ValueQuery, DefaultZeroU64<T>>;
     #[pallet::storage] // --- MAP ( netuid ) --> alpha_sell_per_block | Alpha sold per block.

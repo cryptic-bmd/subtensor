@@ -649,7 +649,7 @@ fn test_do_move_event_emission() {
                 netuid,
                 destination_hotkey,
                 netuid,
-                stake_amount - fee - 1, // Should be TAO equivalent
+                stake_amount - fee - 1, // Should be ZPHR equivalent
             )
             .into(),
         );
@@ -1694,7 +1694,7 @@ fn test_move_stake_specific_stake_into_subnet_fail() {
         SubnetAlphaIn::<Test>::insert(netuid, alpha_in);
         SubnetTAO::<Test>::insert(netuid, tao_in);
 
-        // Give TAO balance to coldkey
+        // Give ZPHR balance to coldkey
         SubtensorModule::add_balance_to_coldkey_account(
             &coldkey_account_id,
             tao_staked + 1_000_000_000,

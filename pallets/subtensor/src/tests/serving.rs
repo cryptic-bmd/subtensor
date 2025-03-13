@@ -1035,7 +1035,7 @@ fn test_do_set_subnet_identity() {
         let subnet_url = b"subnet.com".to_vec();
         let discord = b"discord.com".to_vec();
         let description = b"I am the describer".to_vec();
-        let additional = b"tao foreva".to_vec();
+        let additional = b"ZPHR foreva".to_vec();
 
         // Set subnet identity
         assert_ok!(SubtensorModule::do_set_subnet_identity(
@@ -1210,7 +1210,7 @@ fn test_set_identity_for_non_existent_subnet() {
         let subnet_url = b"subnet.com".to_vec();
         let discord = b"discord.com".to_vec();
         let description = b"I am the describer".to_vec();
-        let additional = b"tao foreva".to_vec();
+        let additional = b"ZPHR foreva".to_vec();
 
         // Attempt to set identity for a non-existent subnet
         assert_noop!(
@@ -1240,7 +1240,7 @@ fn test_set_subnet_identity_dispatch_info_ok() {
         let subnet_url = b"subnet.com".to_vec();
         let discord = b"discord.com".to_vec();
         let description = b"I am the describer".to_vec();
-        let additional = b"tao foreva".to_vec();
+        let additional = b"ZPHR foreva".to_vec();
 
         let call: RuntimeCall = RuntimeCall::SubtensorModule(SubtensorCall::set_subnet_identity {
             netuid,

@@ -7,7 +7,7 @@ interface IStaking {
      * @dev Adds a subtensor stake corresponding to the value sent with the transaction, associated
      * with the `hotkey`.
      *
-     * This function allows external accounts and contracts to stake TAO into the subtensor pallet,
+     * This function allows external accounts and contracts to stake ZPHR into the subtensor pallet,
      * which effectively calls `add_stake` on the subtensor pallet with specified hotkey as a parameter
      * and coldkey being the hashed address mapping of H160 sender address to Substrate ss58 address as
      * implemented in Frontier HashedAddressMapping:
@@ -25,7 +25,7 @@ interface IStaking {
     /**
      * @dev Removes a subtensor stake `amount` from the specified `hotkey`.
      *
-     * This function allows external accounts and contracts to unstake TAO from the subtensor pallet,
+     * This function allows external accounts and contracts to unstake ZPHR from the subtensor pallet,
      * which effectively calls `remove_stake` on the subtensor pallet with specified hotkey as a parameter
      * and coldkey being the hashed address mapping of H160 sender address to Substrate ss58 address as
      * implemented in Frontier HashedAddressMapping:

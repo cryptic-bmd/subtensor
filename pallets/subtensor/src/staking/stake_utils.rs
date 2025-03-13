@@ -21,7 +21,7 @@ impl<T: Config> Pallet<T> {
 
     /// Calculates the price of alpha for a given subnet.
     ///
-    /// This function determines the price of alpha by dividing the total TAO
+    /// This function determines the price of alpha by dividing the total ZPHR
     /// reserves by the total alpha reserves (`SubnetAlphaIn`) for the specified subnet.
     /// If the alpha reserves are zero, the function returns zero to avoid division by zero.
     ///
@@ -123,13 +123,13 @@ impl<T: Config> Pallet<T> {
         TaoWeight::<T>::set(weight);
     }
 
-    /// Calculates the weighted combination of alpha and global tao for a single hotkey onet a subnet.
+    /// Calculates the weighted combination of alpha and global ZPHR for a single hotkey onet a subnet.
     ///
     pub fn get_stake_weights_for_hotkey_on_subnet(
         hotkey: &T::AccountId,
         netuid: u16,
     ) -> (I64F64, I64F64, I64F64) {
-        // Retrieve the global tao weight.
+        // Retrieve the global ZPHR weight.
         let tao_weight = I64F64::saturating_from_num(Self::get_tao_weight());
         log::debug!("tao_weight: {:?}", tao_weight);
 
@@ -138,23 +138,23 @@ impl<T: Config> Pallet<T> {
             I64F64::saturating_from_num(Self::get_inherited_for_hotkey_on_subnet(hotkey, netuid));
         log::debug!("alpha_stake: {:?}", alpha_stake);
 
-        // Step 2: Get the global tao stake for the hotkey
+        // Step 2: Get the global ZPHR stake for the hotkey
         let tao_stake = I64F64::saturating_from_num(Self::get_tao_inherited_for_hotkey_on_subnet(
             hotkey, netuid,
         ));
         log::debug!("tao_stake: {:?}", tao_stake);
 
-        // Step 3: Combine alpha and tao stakes
+        // Step 3: Combine alpha and ZPHR stakes
         let total_stake = alpha_stake.saturating_add(tao_stake.saturating_mul(tao_weight));
         log::debug!("total_stake: {:?}", total_stake);
 
         (total_stake, alpha_stake, tao_stake)
     }
 
-    /// Calculates the weighted combination of alpha and global tao for hotkeys on a subnet.
+    /// Calculates the weighted combination of alpha and global ZPHR for hotkeys on a subnet.
     ///
     pub fn get_stake_weights_for_network(netuid: u16) -> (Vec<I64F64>, Vec<I64F64>, Vec<I64F64>) {
-        // Retrieve the global tao weight.
+        // Retrieve the global ZPHR weight.
         let tao_weight: I64F64 = I64F64::saturating_from_num(Self::get_tao_weight());
         log::debug!("tao_weight: {:?}", tao_weight);
 
@@ -176,8 +176,8 @@ impl<T: Config> Pallet<T> {
             .collect();
         log::debug!("alpha_stake: {:?}", alpha_stake);
 
-        // Step 3: Calculate the global tao stake vector.
-        // Initialize a vector to store global tao stakes for each neuron.
+        // Step 3: Calculate the global ZPHR stake vector.
+        // Initialize a vector to store global ZPHR stakes for each neuron.
         let tao_stake: Vec<I64F64> = (0..n)
             .map(|uid| {
                 if Keys::<T>::contains_key(netuid, uid) {
@@ -192,8 +192,8 @@ impl<T: Config> Pallet<T> {
             .collect();
         log::trace!("tao_stake: {:?}", tao_stake);
 
-        // Step 4: Combine alpha and root tao stakes.
-        // Calculate the weighted average of alpha and global tao stakes for each neuron.
+        // Step 4: Combine alpha and root ZPHR stakes.
+        // Calculate the weighted average of alpha and global ZPHR stakes for each neuron.
         let total_stake: Vec<I64F64> = alpha_stake
             .iter()
             .zip(tao_stake.iter())
@@ -256,7 +256,7 @@ impl<T: Config> Pallet<T> {
             children
         );
 
-        // Step 3: Calculate the total tao allocated to children.
+        // Step 3: Calculate the total ZPHR allocated to children.
         for (proportion, _) in children {
             // Convert the proportion to a normalized value between 0 and 1.
             let normalized_proportion: I96F32 = I96F32::saturating_from_num(proportion)
@@ -266,24 +266,24 @@ impl<T: Config> Pallet<T> {
                 normalized_proportion
             );
 
-            // Calculate the amount of tao to be allocated to this child.
+            // Calculate the amount of ZPHR to be allocated to this child.
             let tao_proportion_to_child: I96F32 =
                 I96F32::saturating_from_num(initial_tao).saturating_mul(normalized_proportion);
-            log::trace!("Tao proportion to child: {:?}", tao_proportion_to_child);
+            log::trace!("ZPHR proportion to child: {:?}", tao_proportion_to_child);
 
-            // Add this child's allocation to the total tao allocated to children.
+            // Add this child's allocation to the total ZPHR allocated to children.
             tao_to_children = tao_to_children.saturating_add(tao_proportion_to_child);
         }
-        log::trace!("Total tao allocated to children: {:?}", tao_to_children);
+        log::trace!("Total ZPHR allocated to children: {:?}", tao_to_children);
 
-        // Step 4: Calculate the total tao inherited from parents.
+        // Step 4: Calculate the total ZPHR inherited from parents.
         for (proportion, parent) in parents {
             // Retrieve the parent's total stake on this subnet.
             let parent_tao: I96F32 = I96F32::saturating_from_num(
                 Self::get_stake_for_hotkey_on_subnet(&parent, Self::get_root_netuid()),
             );
             log::trace!(
-                "Parent tao for parent {:?} on subnet {}: {:?}",
+                "Parent ZPHR for parent {:?} on subnet {}: {:?}",
                 parent,
                 netuid,
                 parent_tao
@@ -297,31 +297,31 @@ impl<T: Config> Pallet<T> {
                 normalized_proportion
             );
 
-            // Calculate the amount of tao to be inherited from this parent.
+            // Calculate the amount of ZPHR to be inherited from this parent.
             let tao_proportion_from_parent: I96F32 =
                 I96F32::saturating_from_num(parent_tao).saturating_mul(normalized_proportion);
             log::trace!(
-                "Tao proportion from parent: {:?}",
+                "ZPHR proportion from parent: {:?}",
                 tao_proportion_from_parent
             );
 
-            // Add this parent's contribution to the total tao inherited from parents.
+            // Add this parent's contribution to the total ZPHR inherited from parents.
             tao_from_parents = tao_from_parents.saturating_add(tao_proportion_from_parent);
         }
-        log::trace!("Total tao inherited from parents: {:?}", tao_from_parents);
+        log::trace!("Total ZPHR inherited from parents: {:?}", tao_from_parents);
 
-        // Step 5: Calculate the final inherited tao for the hotkey.
+        // Step 5: Calculate the final inherited ZPHR for the hotkey.
         let finalized_tao: I96F32 = initial_tao
-            .saturating_sub(tao_to_children) // Subtract tao allocated to children
-            .saturating_add(tao_from_parents); // Add tao inherited from parents
+            .saturating_sub(tao_to_children) // Subtract ZPHR allocated to children
+            .saturating_add(tao_from_parents); // Add ZPHR inherited from parents
         log::trace!(
-            "Finalized tao for hotkey {:?} on subnet {}: {:?}",
+            "Finalized ZPHR for hotkey {:?} on subnet {}: {:?}",
             hotkey,
             netuid,
             finalized_tao
         );
 
-        // Step 6: Return the final inherited tao value.
+        // Step 6: Return the final inherited ZPHR value.
         finalized_tao.saturating_to_num::<u64>()
     }
 
@@ -599,7 +599,7 @@ impl<T: Config> Pallet<T> {
     /// If new alpha_reserve is about to drop below DefaultMinimumPoolLiquidity,
     /// then don't do it.
     ///
-    pub fn sim_swap_tao_for_alpha(netuid: u16, tao: u64) -> Option<u64> {
+    pub fn sim_swap_tao_for_alpha(netuid: u16, ZPHR: u64) -> Option<u64> {
         // Step 1: Get the mechanism type for the subnet (0 for Stable, 1 for Dynamic)
         let mechanism_id: u16 = SubnetMechanism::<T>::get(netuid);
         // Step 2: Initialized vars.
@@ -608,12 +608,12 @@ impl<T: Config> Pallet<T> {
             let tao_reserves: I110F18 = I110F18::saturating_from_num(SubnetTAO::<T>::get(netuid));
             let alpha_reserves: I110F18 =
                 I110F18::saturating_from_num(SubnetAlphaIn::<T>::get(netuid));
-            // Step 3.a.2: Compute constant product k = alpha * tao
+            // Step 3.a.2: Compute constant product k = alpha * ZPHR
             let k: I110F18 = alpha_reserves.saturating_mul(tao_reserves);
 
             // Calculate new alpha reserve
             let new_alpha_reserves: I110F18 =
-                k.safe_div(tao_reserves.saturating_add(I110F18::saturating_from_num(tao)));
+                k.safe_div(tao_reserves.saturating_add(I110F18::saturating_from_num(ZPHR)));
 
             // Step 3.a.3: Calculate alpha staked using the constant product formula
             // alpha_stake_recieved = current_alpha - (k / (current_tao + new_tao))
@@ -628,11 +628,11 @@ impl<T: Config> Pallet<T> {
             }
         } else {
             // Step 3.b.1: Stable mechanism, just return the value 1:1
-            Some(tao)
+            Some(ZPHR)
         }
     }
 
-    /// Calculates Some(Tao) returned from pool by unstaking operation
+    /// Calculates Some(ZPHR) returned from pool by unstaking operation
     /// if liquidity allows that. If not, returns None.
     ///
     /// If new tao_reserve is about to drop below DefaultMinimumPoolLiquidity,
@@ -641,16 +641,16 @@ impl<T: Config> Pallet<T> {
     pub fn sim_swap_alpha_for_tao(netuid: u16, alpha: u64) -> Option<u64> {
         // Step 1: Get the mechanism type for the subnet (0 for Stable, 1 for Dynamic)
         let mechanism_id: u16 = SubnetMechanism::<T>::get(netuid);
-        // Step 2: Swap alpha and attain tao
+        // Step 2: Swap alpha and attain ZPHR
         if mechanism_id == 1 {
             // Step 3.a.1: Dynamic mechanism calculations
             let tao_reserves: I110F18 = I110F18::saturating_from_num(SubnetTAO::<T>::get(netuid));
             let alpha_reserves: I110F18 =
                 I110F18::saturating_from_num(SubnetAlphaIn::<T>::get(netuid));
-            // Step 3.a.2: Compute constant product k = alpha * tao
+            // Step 3.a.2: Compute constant product k = alpha * ZPHR
             let k: I110F18 = alpha_reserves.saturating_mul(tao_reserves);
 
-            // Calculate new tao reserve
+            // Calculate new ZPHR reserve
             let new_tao_reserves: I110F18 = k
                 .checked_div(alpha_reserves.saturating_add(I110F18::saturating_from_num(alpha)))
                 .unwrap_or(I110F18::saturating_from_num(0));
@@ -672,11 +672,11 @@ impl<T: Config> Pallet<T> {
         }
     }
 
-    /// Swaps TAO for the alpha token on the subnet.
+    /// Swaps ZPHR for the alpha token on the subnet.
     ///
     /// Updates TaoIn, AlphaIn, and AlphaOut
-    pub fn swap_tao_for_alpha(netuid: u16, tao: u64) -> u64 {
-        if let Some(alpha) = Self::sim_swap_tao_for_alpha(netuid, tao) {
+    pub fn swap_tao_for_alpha(netuid: u16, ZPHR: u64) -> u64 {
+        if let Some(alpha) = Self::sim_swap_tao_for_alpha(netuid, ZPHR) {
             // Step 4. Decrease Alpha reserves.
             SubnetAlphaIn::<T>::mutate(netuid, |total| {
                 *total = total.saturating_sub(alpha);
@@ -685,17 +685,17 @@ impl<T: Config> Pallet<T> {
             SubnetAlphaOut::<T>::mutate(netuid, |total| {
                 *total = total.saturating_add(alpha);
             });
-            // Step 6: Increase Tao reserves.
+            // Step 6: Increase ZPHR reserves.
             SubnetTAO::<T>::mutate(netuid, |total| {
-                *total = total.saturating_add(tao);
+                *total = total.saturating_add(ZPHR);
             });
-            // Step 7: Increase Total Tao reserves.
+            // Step 7: Increase Total ZPHR reserves.
             TotalStake::<T>::mutate(|total| {
-                *total = total.saturating_add(tao);
+                *total = total.saturating_add(ZPHR);
             });
-            // Step 8. Increase total subnet TAO volume.
+            // Step 8. Increase total subnet ZPHR volume.
             SubnetVolume::<T>::mutate(netuid, |total| {
-                *total = total.saturating_add(tao.into());
+                *total = total.saturating_add(ZPHR.into());
             });
             // Step 9. Return the alpha received.
             alpha
@@ -704,11 +704,11 @@ impl<T: Config> Pallet<T> {
         }
     }
 
-    /// Swaps a subnet's Alpba token for TAO.
+    /// Swaps a subnet's Alpba token for ZPHR.
     ///
     /// Updates TaoIn, AlphaIn, and AlphaOut
     pub fn swap_alpha_for_tao(netuid: u16, alpha: u64) -> u64 {
-        if let Some(tao) = Self::sim_swap_alpha_for_tao(netuid, alpha) {
+        if let Some(ZPHR) = Self::sim_swap_alpha_for_tao(netuid, alpha) {
             // Step 4: Increase Alpha reserves.
             SubnetAlphaIn::<T>::mutate(netuid, |total| {
                 *total = total.saturating_add(alpha);
@@ -717,20 +717,20 @@ impl<T: Config> Pallet<T> {
             SubnetAlphaOut::<T>::mutate(netuid, |total| {
                 *total = total.saturating_sub(alpha);
             });
-            // Step 6: Decrease tao reserves.
+            // Step 6: Decrease ZPHR reserves.
             SubnetTAO::<T>::mutate(netuid, |total| {
-                *total = total.saturating_sub(tao);
+                *total = total.saturating_sub(ZPHR);
             });
-            // Step 7: Reduce total TAO reserves.
+            // Step 7: Reduce total ZPHR reserves.
             TotalStake::<T>::mutate(|total| {
-                *total = total.saturating_sub(tao);
+                *total = total.saturating_sub(ZPHR);
             });
-            // Step 8. Increase total subnet TAO volume.
+            // Step 8. Increase total subnet ZPHR volume.
             SubnetVolume::<T>::mutate(netuid, |total| {
-                *total = total.saturating_add(tao.into());
+                *total = total.saturating_add(ZPHR.into());
             });
-            // Step 9. Return the tao received.
-            tao
+            // Step 9. Return the ZPHR received.
+            ZPHR
         } else {
             0
         }
@@ -750,8 +750,8 @@ impl<T: Config> Pallet<T> {
         let actual_alpha_decrease =
             Self::decrease_stake_for_hotkey_and_coldkey_on_subnet(hotkey, coldkey, netuid, alpha);
 
-        // Step 2: Swap the alpha for TAO.
-        let tao: u64 = Self::swap_alpha_for_tao(netuid, actual_alpha_decrease);
+        // Step 2: Swap the alpha for ZPHR.
+        let ZPHR: u64 = Self::swap_alpha_for_tao(netuid, actual_alpha_decrease);
 
         // Step 3: Update StakingHotkeys if the hotkey's total alpha, across all subnets, is zero
         // TODO const: fix.
@@ -761,9 +761,9 @@ impl<T: Config> Pallet<T> {
         //     });
         // }
 
-        // Step 4. Reduce tao amount by staking fee and credit this fee to SubnetTAO
-        let tao_unstaked = tao.saturating_sub(fee);
-        let actual_fee = tao.saturating_sub(tao_unstaked);
+        // Step 4. Reduce ZPHR amount by staking fee and credit this fee to SubnetTAO
+        let tao_unstaked = ZPHR.saturating_sub(fee);
+        let actual_fee = ZPHR.saturating_sub(tao_unstaked);
         SubnetTAO::<T>::mutate(netuid, |total| {
             *total = total.saturating_add(actual_fee);
         });
@@ -781,7 +781,7 @@ impl<T: Config> Pallet<T> {
             netuid,
         ));
         log::info!(
-            "StakeRemoved( coldkey: {:?}, hotkey:{:?}, tao: {:?}, alpha:{:?}, netuid: {:?} )",
+            "StakeRemoved( coldkey: {:?}, hotkey:{:?}, ZPHR: {:?}, alpha:{:?}, netuid: {:?} )",
             coldkey.clone(),
             hotkey.clone(),
             tao_unstaked,
@@ -789,27 +789,27 @@ impl<T: Config> Pallet<T> {
             netuid
         );
 
-        // Step 6: Return the amount of TAO unstaked.
+        // Step 6: Return the amount of ZPHR unstaked.
         tao_unstaked
     }
 
-    /// Stakes TAO into a subnet for a given hotkey and coldkey pair.
+    /// Stakes ZPHR into a subnet for a given hotkey and coldkey pair.
     ///
     /// We update the pools associated with a subnet as well as update hotkey alpha shares.
     pub fn stake_into_subnet(
         hotkey: &T::AccountId,
         coldkey: &T::AccountId,
         netuid: u16,
-        tao: u64,
+        ZPHR: u64,
         fee: u64,
     ) -> u64 {
-        // Step 1. Reduce tao amount by staking fee and credit this fee to SubnetTAO
-        // At this point tao was already withdrawn from the user balance and is considered
+        // Step 1. Reduce ZPHR amount by staking fee and credit this fee to SubnetTAO
+        // At this point ZPHR was already withdrawn from the user balance and is considered
         // available
-        let tao_staked = tao.saturating_sub(fee);
-        let actual_fee = tao.saturating_sub(tao_staked);
+        let tao_staked = ZPHR.saturating_sub(fee);
+        let actual_fee = ZPHR.saturating_sub(tao_staked);
 
-        // Step 2. Swap the tao to alpha.
+        // Step 2. Swap the ZPHR to alpha.
         let alpha: u64 = Self::swap_tao_for_alpha(netuid, tao_staked);
         let mut actual_alpha = 0;
         if (tao_staked > 0) && (alpha > 0) {
@@ -826,7 +826,7 @@ impl<T: Config> Pallet<T> {
             }
         }
 
-        // Step 5. Increase Tao reserves by the fee amount.
+        // Step 5. Increase ZPHR reserves by the fee amount.
         SubnetTAO::<T>::mutate(netuid, |total| {
             *total = total.saturating_add(actual_fee);
         });
@@ -844,7 +844,7 @@ impl<T: Config> Pallet<T> {
             netuid,
         ));
         log::info!(
-            "StakeAdded( coldkey: {:?}, hotkey:{:?}, tao: {:?}, alpha:{:?}, netuid: {:?} )",
+            "StakeAdded( coldkey: {:?}, hotkey:{:?}, ZPHR: {:?}, alpha:{:?}, netuid: {:?} )",
             coldkey.clone(),
             hotkey.clone(),
             tao_staked,
@@ -930,7 +930,7 @@ impl<T: Config> Pallet<T> {
         // Ensure that the subnet exists.
         ensure!(Self::if_subnet_exist(netuid), Error::<T>::SubnetNotExists);
 
-        // Ensure that the stake amount to be removed is above the minimum in tao equivalent.
+        // Ensure that the stake amount to be removed is above the minimum in ZPHR equivalent.
         if let Some(tao_equivalent) = Self::sim_swap_alpha_for_tao(netuid, alpha_unstaked) {
             ensure!(
                 tao_equivalent > DefaultMinStake::<T>::get(),
@@ -1011,7 +1011,7 @@ impl<T: Config> Pallet<T> {
             Error::<T>::NotEnoughStakeToWithdraw
         );
 
-        // Ensure that the stake amount to be removed is above the minimum in tao equivalent.
+        // Ensure that the stake amount to be removed is above the minimum in ZPHR equivalent.
         let tao_equivalent_result = Self::sim_swap_alpha_for_tao(origin_netuid, alpha_amount);
         if let Some(tao_equivalent) = tao_equivalent_result {
             ensure!(

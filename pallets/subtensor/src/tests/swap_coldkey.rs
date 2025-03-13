@@ -342,7 +342,7 @@ fn test_swap_with_max_values() {
         let netuid = 1u16;
         let netuid2 = 2u16;
         let stake = 10_000;
-        let max_stake = 21_000_000_000_000_000; // 21 Million TAO; max possible balance.
+        let max_stake = 21_000_000_000_000_000; // 21 Million ZPHR; max possible balance.
         let fee = DefaultStakingFee::<Test>::get();
 
         // Add a network

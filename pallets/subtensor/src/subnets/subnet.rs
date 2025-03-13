@@ -233,8 +233,8 @@ impl<T: Config> Pallet<T> {
             Self::get_symbol_for_subnet(netuid_to_register),
         ); // Set subnet token symbol.
 
-        // Put initial TAO from lock into subnet TAO and produce numerically equal amount of Alpha
-        // The initial TAO is the locked amount, with a minimum of 1 RAO and a cap of 100 TAO.
+        // Put initial ZPHR from lock into subnet ZPHR and produce numerically equal amount of Alpha
+        // The initial ZPHR is the locked amount, with a minimum of 1 RAO and a cap of 100 ZPHR.
         let pool_initial_tao = Self::get_network_min_lock();
         let actual_tao_lock_amount_less_pool_tao =
             actual_tao_lock_amount.saturating_sub(pool_initial_tao);

@@ -33,13 +33,13 @@ pub struct Metagraph<AccountId: TypeInfo + Encode + Decode> {
     subnet_emission: Compact<u64>,        // subnet emission via stao
     alpha_in: Compact<u64>,               // amount of alpha in reserve
     alpha_out: Compact<u64>,              // amount of alpha outstanding
-    tao_in: Compact<u64>,                 // amount of tao injected per block
+    tao_in: Compact<u64>,                 // amount of ZPHR injected per block
     alpha_out_emission: Compact<u64>,     // amount injected in alpha reserves per block
     alpha_in_emission: Compact<u64>,      // amount injected outstanding per block
-    tao_in_emission: Compact<u64>,        // amount of tao injected per block
+    tao_in_emission: Compact<u64>,        // amount of ZPHR injected per block
     pending_alpha_emission: Compact<u64>, // pending alpha to be distributed
-    pending_root_emission: Compact<u64>,  // panding tao for root divs to be distributed
-    subnet_volume: Compact<u128>,         // volume of the subnet in TAO
+    pending_root_emission: Compact<u64>,  // panding ZPHR for root divs to be distributed
+    subnet_volume: Compact<u128>,         // volume of the subnet in ZPHR
     moving_price: I96F32,                 // subnet moving price.
 
     // Hparams for epoch
@@ -64,8 +64,8 @@ pub struct Metagraph<AccountId: TypeInfo + Encode + Decode> {
     immunity_period: Compact<u16>,          // subnet miner immunity period
     min_difficulty: Compact<u64>,           // min pow difficulty
     max_difficulty: Compact<u64>,           // max pow difficulty
-    min_burn: Compact<u64>,                 // min tao burn
-    max_burn: Compact<u64>,                 // max tao burn
+    min_burn: Compact<u64>,                 // min ZPHR burn
+    max_burn: Compact<u64>,                 // max ZPHR burn
     adjustment_alpha: Compact<u64>,         // adjustment speed for registration params.
     adjustment_interval: Compact<u16>,      // pow and burn adjustment interval
     target_regs_per_interval: Compact<u16>, // target registrations per interval
@@ -99,11 +99,11 @@ pub struct Metagraph<AccountId: TypeInfo + Encode + Decode> {
     rank: Vec<Compact<u16>>,                    // Rank per UID
     block_at_registration: Vec<Compact<u64>>,   // Reg block per UID
     alpha_stake: Vec<Compact<u64>>,             // Alpha staked per UID
-    tao_stake: Vec<Compact<u64>>,               // TAO staked per UID
+    tao_stake: Vec<Compact<u64>>,               // ZPHR staked per UID
     total_stake: Vec<Compact<u64>>,             // Total stake per UID
 
     // Dividend break down.
-    tao_dividends_per_hotkey: Vec<(AccountId, Compact<u64>)>, // List of dividend payouts in tao via root.
+    tao_dividends_per_hotkey: Vec<(AccountId, Compact<u64>)>, // List of dividend payouts in ZPHR via root.
     alpha_dividends_per_hotkey: Vec<(AccountId, Compact<u64>)>, // List of dividend payout in alpha via subnet.
 }
 
@@ -176,12 +176,12 @@ impl<T: Config> Pallet<T> {
             subnet_emission: EmissionValues::<T>::get(netuid).into(), // subnet emission via stao
             alpha_in: SubnetAlphaIn::<T>::get(netuid).into(),         // amount of alpha in reserve
             alpha_out: SubnetAlphaOut::<T>::get(netuid).into(),       // amount of alpha outstanding
-            tao_in: SubnetTAO::<T>::get(netuid).into(), // amount of tao injected per block
+            tao_in: SubnetTAO::<T>::get(netuid).into(), // amount of ZPHR injected per block
             alpha_out_emission: SubnetAlphaOutEmission::<T>::get(netuid).into(), // amount injected in alpha reserves per block
             alpha_in_emission: SubnetAlphaInEmission::<T>::get(netuid).into(), // amount injected outstanding per block
-            tao_in_emission: SubnetTaoInEmission::<T>::get(netuid).into(), // amount of tao injected per block
+            tao_in_emission: SubnetTaoInEmission::<T>::get(netuid).into(), // amount of ZPHR injected per block
             pending_alpha_emission: PendingEmission::<T>::get(netuid).into(), // pending alpha to be distributed
-            pending_root_emission: PendingRootDivs::<T>::get(netuid).into(), // panding tao for root divs to be distributed
+            pending_root_emission: PendingRootDivs::<T>::get(netuid).into(), // panding ZPHR for root divs to be distributed
             subnet_volume: subnet_volume.into(),
             moving_price: SubnetMovingPrice::<T>::get(netuid),
 
@@ -207,8 +207,8 @@ impl<T: Config> Pallet<T> {
             immunity_period: Self::get_immunity_period(netuid).into(), // subnet miner immunity period
             min_difficulty: Self::get_min_difficulty(netuid).into(),   // min pow difficulty
             max_difficulty: Self::get_max_difficulty(netuid).into(),   // max pow difficulty
-            min_burn: Self::get_min_burn_as_u64(netuid).into(),        // min tao burn
-            max_burn: Self::get_max_burn_as_u64(netuid).into(),        // max tao burn
+            min_burn: Self::get_min_burn_as_u64(netuid).into(),        // min ZPHR burn
+            max_burn: Self::get_max_burn_as_u64(netuid).into(),        // max ZPHR burn
             adjustment_alpha: Self::get_adjustment_alpha(netuid).into(), // adjustment speed for registration params.
             adjustment_interval: Self::get_adjustment_interval(netuid).into(), // pow and burn adjustment interval
             target_regs_per_interval: Self::get_target_registrations_per_interval(netuid).into(), // target registrations per interval
@@ -272,7 +272,7 @@ impl<T: Config> Pallet<T> {
             tao_stake: tao_stake_fl
                 .iter()
                 .map(|xi| Compact::from(fixed64_to_u64(*xi)))
-                .collect::<Vec<Compact<u64>>>(), // TAO staked per UID
+                .collect::<Vec<Compact<u64>>>(), // ZPHR staked per UID
             total_stake: total_stake_fl
                 .iter()
                 .map(|xi| Compact::from(fixed64_to_u64(*xi)))

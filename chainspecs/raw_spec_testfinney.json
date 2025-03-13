@@ -1,12 +1,12 @@
 {
-  "name": "Bittensor",
-  "id": "bittensor",
+  "name": "Zephyros",
+  "id": "zephyros",
   "chainType": "Development",
   "bootNodes": [
     "/dns/bootnode.test.chain.opentensor.ai/tcp/30333/p2p/12D3KooWPM4mLcKJGtyVtkggqdG84zWrd7Rij6PGQDoijh1X86Vr"
   ],
   "telemetryEndpoints": null,
-  "protocolId": "bittensor",
+  "protocolId": "zephyros",
   "properties": {
     "ss58Format": 42,
     "tokenDecimals": 9,

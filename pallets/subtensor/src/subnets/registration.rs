@@ -35,7 +35,7 @@ impl<T: Config> Pallet<T> {
         neuron_uid
     }
 
-    /// ---- The implementation for the extrinsic do_burned_registration: registering by burning TAO.
+    /// ---- The implementation for the extrinsic do_burned_registration: registering by burning ZPHR.
     ///
     /// # Args:
     /// * 'origin': (<T as frame_system::Config>RuntimeOrigin):

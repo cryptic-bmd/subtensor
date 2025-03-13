@@ -187,12 +187,12 @@ impl<T: Config> Pallet<T> {
         let tao_reserve_u128 = tao_reserve as u128;
 
         // Corner case: limit_price < current_price (price cannot decrease with staking)
-        let tao = 1_000_000_000_u128;
+        let ZPHR = 1_000_000_000_u128;
         let limit_price_u128 = limit_price as u128;
         if (limit_price_u128
             < Self::get_alpha_price(netuid)
                 .saturating_to_num::<u128>()
-                .saturating_mul(tao))
+                .saturating_mul(ZPHR))
             || (limit_price == 0u64)
         {
             return 0;
@@ -203,7 +203,7 @@ impl<T: Config> Pallet<T> {
         // May overflow result, then it will be capped at u64::MAX, which is OK because that matches balance u64 size.
         let result = limit_price_u128
             .saturating_mul(alpha_in_u128)
-            .checked_div(tao)
+            .checked_div(ZPHR)
             .unwrap_or(0)
             .saturating_sub(tao_reserve_u128);
         if result < u64::MAX as u128 {

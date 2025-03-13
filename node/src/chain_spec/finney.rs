@@ -66,7 +66,7 @@ pub fn finney_mainnet_config() -> Result<ChainSpec, String> {
 
     // Give front-ends necessary data to present to users
     let mut properties = sc_service::Properties::new();
-    properties.insert("tokenSymbol".into(), "TAO".into());
+    properties.insert("tokenSymbol".into(), "ZPHR".into());
     properties.insert("tokenDecimals".into(), 9.into());
     properties.insert("ss58Format".into(), 42.into());
 
@@ -77,9 +77,9 @@ pub fn finney_mainnet_config() -> Result<ChainSpec, String> {
             ..Default::default()
         },
     )
-    .with_name("Bittensor")
-    .with_protocol_id("bittensor")
-    .with_id("bittensor")
+    .with_name("Zephyros")
+    .with_protocol_id("zephyros")
+    .with_id("zephyros")
     .with_chain_type(ChainType::Live)
 	.with_boot_nodes(vec![
         "/dns/bootnode.finney.chain.opentensor.ai/tcp/30333/ws/p2p/12D3KooWRwbMb85RWnT8DSXSYMWQtuDwh4LJzndoRrTDotTR5gDC"

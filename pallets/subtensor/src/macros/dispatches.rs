@@ -642,7 +642,7 @@ mod dispatches {
         /// 	- The u16 network identifier.
         ///
         /// * 'version' (u64):
-        /// 	- The bittensor version identifier.
+        /// 	- The zephyros version identifier.
         ///
         /// * 'ip' (u64):
         /// 	- The endpoint ip information as a u128 encoded integer.
@@ -723,7 +723,7 @@ mod dispatches {
         /// 	- The u16 network identifier.
         ///
         /// * 'version' (u64):
-        /// 	- The bittensor version identifier.
+        /// 	- The zephyros version identifier.
         ///
         /// * 'ip' (u64):
         /// 	- The endpoint ip information as a u128 encoded integer.
@@ -805,7 +805,7 @@ mod dispatches {
         /// 	- The u16 network identifier.
         ///
         /// * 'version' (u16):
-        /// 	-  The bittensor version identifier.
+        /// 	-  The zephyros version identifier.
         ///
         /// * 'ip' (u128):
         /// 	- The prometheus ip information as a u128 encoded integer.
@@ -1434,7 +1434,7 @@ mod dispatches {
         /// 	- The u16 network identifier.
         ///
         /// * 'version' (u16):
-        /// 	-  The bittensor version identifier.
+        /// 	-  The zephyros version identifier.
         ///
         /// * 'ip' (u128):
         /// 	- The prometheus ip information as a u128 encoded integer.

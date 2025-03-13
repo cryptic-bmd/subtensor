@@ -2004,7 +2004,7 @@ fn test_get_stake_for_hotkey_on_subnet_edge_cases() {
         register_ok_neuron(netuid, child2, coldkey, 0);
 
         // Set network max stake
-        let network_max_stake: u64 = 500_000_000_000_000; // 500_000 TAO
+        let network_max_stake: u64 = 500_000_000_000_000; // 500_000 ZPHR
         SubtensorModule::set_network_max_stake(netuid, network_max_stake);
 
         // Increase stake to the network max
@@ -3086,7 +3086,7 @@ fn test_parent_child_chain_emission() {
         ));
 
         // Set the stakes directly
-        // This avoids needing to swap tao to alpha, impacting the initial stake distribution.
+        // This avoids needing to swap ZPHR to alpha, impacting the initial stake distribution.
         SubtensorModule::increase_stake_for_hotkey_and_coldkey_on_subnet(
             &hotkey_a,
             &coldkey_a,
@@ -3149,7 +3149,7 @@ fn test_parent_child_chain_emission() {
         ChildkeyTake::<Test>::insert(hotkey_b, netuid, chk_take_u16);
         ChildkeyTake::<Test>::insert(hotkey_c, netuid, chk_take_u16);
 
-        // Set the weight of root TAO to be 0%, so only alpha is effective.
+        // Set the weight of root ZPHR to be 0%, so only alpha is effective.
         SubtensorModule::set_tao_weight(0);
 
         let emission: I96F32 = I96F32::from_num(SubtensorModule::get_block_emission().unwrap_or(0));
@@ -3287,7 +3287,7 @@ fn test_parent_child_chain_epoch() {
         ));
 
         // Set the stakes directly
-        // This avoids needing to swap tao to alpha, impacting the initial stake distribution.
+        // This avoids needing to swap ZPHR to alpha, impacting the initial stake distribution.
         SubtensorModule::increase_stake_for_hotkey_and_coldkey_on_subnet(
             &hotkey_a,
             &coldkey_a,
@@ -3337,7 +3337,7 @@ fn test_parent_child_chain_epoch() {
         ChildkeyTake::<Test>::insert(hotkey_b, netuid, chk_take_u16);
         ChildkeyTake::<Test>::insert(hotkey_c, netuid, chk_take_u16);
 
-        // Set the weight of root TAO to be 0%, so only alpha is effective.
+        // Set the weight of root ZPHR to be 0%, so only alpha is effective.
         SubtensorModule::set_tao_weight(0);
 
         let hardcoded_emission: I96F32 = I96F32::from_num(1_000_000); // 1 million (adjust as needed)
@@ -3418,7 +3418,7 @@ fn test_dividend_distribution_with_children() {
         ));
 
         // Set the stakes directly
-        // This avoids needing to swap tao to alpha, impacting the initial stake distribution.
+        // This avoids needing to swap ZPHR to alpha, impacting the initial stake distribution.
         SubtensorModule::increase_stake_for_hotkey_and_coldkey_on_subnet(
             &hotkey_a,
             &coldkey_a,
@@ -3468,7 +3468,7 @@ fn test_dividend_distribution_with_children() {
         ChildkeyTake::<Test>::insert(hotkey_b, netuid, chk_take_u16);
         ChildkeyTake::<Test>::insert(hotkey_c, netuid, chk_take_u16);
 
-        // Set the weight of root TAO to be 0%, so only alpha is effective.
+        // Set the weight of root ZPHR to be 0%, so only alpha is effective.
         SubtensorModule::set_tao_weight(0);
 
         let hardcoded_emission: I96F32 = I96F32::from_num(1_000_000); // 1 million (adjust as needed)
@@ -3647,7 +3647,7 @@ fn test_dynamic_parent_child_relationships() {
         log::info!("total_alpha: {:?}", total_alpha);
 
         // Set the stakes directly
-        // This avoids needing to swap tao to alpha, impacting the initial stake distribution.
+        // This avoids needing to swap ZPHR to alpha, impacting the initial stake distribution.
         SubtensorModule::increase_stake_for_hotkey_and_coldkey_on_subnet(
             &parent,
             &coldkey_parent,
